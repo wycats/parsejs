@@ -1,0 +1,552 @@
+%% name = LatteScript::Parser
+
+%% program = ast Program(elements)
+%% expression_statement = ast ExpressionStatement(expression)
+%% block_statement = ast BlockStatement(body)
+%% empty_statement = ast EmptyStatement()
+%% identifier = ast Identifier(name)
+%% literal = ast Literal(val)
+%% this_expression = ast ThisExpression()
+%% variable_declaration = ast VariableDeclaration(kind, declarations)
+%% variable_declarator = ast VariableDeclarator(id, init)
+%% array_expression = ast ArrayExpression(elements, loc)
+%% object_expression = ast ObjectExpression(properties)
+%% function_declaration = ast FunctionDeclaration(id, params, body, isGen, isExp)
+%% function_expression = ast FunctionDeclaration(id, params, body, isGen, isExp)
+%% return_statement = ast ReturnStatement(argument)
+%% try_statement = ast TryStatement(block, handler, finalizer)
+%% catch_clause = ast CatchClause(param, guard, body)
+%% throw_statement = ast ThrowStatement(argument)
+%% labeled_statement = ast LabeledStatement(label, body)
+%% break_statement = ast BreakStatement(label)
+%% continue_statement = ast ContinueStatement(label)
+%% switch_statement = ast SwitchStatement(discriminant, cases, lexical)
+%% switch_case = ast SwitchCase(test, consequent)
+%% with_statement = ast WithStatement(object, body)
+%% conditional_expression = ast ConditionalExpression(test, consequent, alternate)
+%% sequence_expression = ast SequenceExpression(expressions)
+%% binary_expression = ast BinaryExpression(op, left, right)
+%% assignment_expression = ast AssignmentExpression(op, left, right)
+%% logical_expression = ast LogicalExpression(op, left, right)
+%% unary_expression = ast UnaryExpression(op, argument, prefix)
+%% update_expression = ast UpdateExpression(op, argument, prefix)
+%% call_expression = ast CallExpression(callee, args)
+%% new_expression = ast NewExpression(callee, args)
+%% member_expression = ast MemberExpression(object, property, computed)
+%% debugger_statement = ast DebuggerStatement()
+%% while_statement = ast WhileStatement(test, body)
+%% do_while_statement = ast DoWhileStatement(body, test)
+%% for_statement = ast ForStatement(init, test, update, body)
+%% for_in_statement = ast ForInStatement(left, right, body, type)
+%% if_statement = ast IfStatement(test, consequent, alternate)
+%% object_pattern = ast ObjectPattern(properties)
+%% array_pattern = ast ArrayPattern(elements)
+%% spread = ast Spread(name)
+%% comment = ast Comment(body, type)
+
+# Whitespace and Source Characters
+
+S = WhiteSpace | LineTerminatorSequence | Comment
+- = S*
+
+SnoLB = (WhiteSpace | SingleLineComment | MultiLineCommentNoLB)+
+
+WhiteSpace = "\t" | "\v" | "\f" | " "
+
+LF = "\n"
+CR = "\r"
+
+LineTerminator = LF | CR
+LineTerminatorSequence = LF | CR LF | CR
+
+Comment = MultiLineComment | SingleLineComment
+MultiLineComment = "/*" < (!("*/") SourceCharacter)* > "*/" ~comment(text, 'multiline')
+MultiLineCommentNoLB = "/*" < (!("*/") !(LineTerminator) SourceCharacter)* > "*/" ~comment(text, 'multiline')
+SingleLineComment = "//" /[^\n\r]*/
+
+SourceCharacter = /[\u0000-\u10FFFF]/
+
+EOS = - ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | - EOF
+EOSnoLB =  SnoLB? ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | SnoLB? EOF
+
+EOF = !(SourceCharacter)
+
+# Keywords and Tokens
+
+ReservedWord =
+  (Keyword | FutureReservedWord | "null" | "true" | "false") !(IdentifierPart)
+
+Keyword =
+  "break" | "case" | "catch" | "continue" | "debugger" | "default" | "delete" | "do" | "else" | "finally" | "for" | "function" | "if" | "instanceof" | "in" | "new" | "return" | "switch" | "this" | "throw" | "try" | "typeof" | "var" | "void" | "while" | "with"
+
+FutureReservedWord =
+  "abstract" | "boolean" | "byte" | "char" | "class" | "const" | "double" | "enum" | "export" | "extends" | "final" | "float" | "goto" | "implements" | "import" | "interface" | "int" | "long" | "native" | "package" | "private" | "protected" | "public" | "short" | "static" | "super" | "synchronized" | "throws" | "transient" | "volatile"
+
+Identifier = !(ReservedWord) IdentifierName
+
+IdentifierName = < IdentifierStart IdentifierPart* > { text }
+
+# TODO: Handle Unicode correctly
+IdentifierStart = /[A-Za-z]/ | "$" | "_"
+
+IdentifierPart = IdentifierStart | /[0-9]/
+
+HexDigit = /[0-9a-fA-F]/
+
+FalseTok      = "false"      !(IdentifierPart)
+TrueTok       = "true"       !(IdentifierPart)
+NullTok       = "null"       !(IdentifierPart)
+BreakTok      = "break"      !(IdentifierPart)
+ContinueTok   = "continue"   !(IdentifierPart)
+DebuggerTok   = "debugger"   !(IdentifierPart)
+InTok         = "in"         !(IdentifierPart)
+InstanceOfTok = "instanceof" !(IdentifierPart)
+DeleteTok     = "delete"     !(IdentifierPart)
+FunctionTok   = "function"   !(IdentifierPart)
+NewTok        = "new"        !(IdentifierPart)
+ThisTok       = "this"       !(IdentifierPart)
+TypeofTok     = "typeof"     !(IdentifierPart)
+VoidTok       = "void"       !(IdentifierPart)
+IfTok         = "if"         !(IdentifierPart)
+ElseTok       = "else"       !(IdentifierPart)
+DoTok         = "do"         !(IdentifierPart)
+WhileTok      = "while"      !(IdentifierPart)
+ForTok        = "for"        !(IdentifierPart)
+VarTok        = "var"        !(IdentifierPart)
+ReturnTok     = "return"     !(IdentifierPart)
+CaseTok       = "case"       !(IdentifierPart)
+DefaultTok    = "default"    !(IdentifierPart)
+SwitchTok     = "switch"     !(IdentifierPart)
+ThrowTok      = "throw"      !(IdentifierPart)
+CatchTok      = "catch"      !(IdentifierPart)
+FinallyTok    = "finally"    !(IdentifierPart)
+TryTok        = "try"        !(IdentifierPart)
+WithTok       = "with"       !(IdentifierPart)
+
+# Program
+
+root = Program:p { p }
+
+Program = (- (Statement | FunctionDeclaration | Comment))*:s - ~program(s)
+
+FunctionBody = (- (Statement | FunctionDeclaration))* -
+
+FunctionDeclaration = FunctionTok - Identifier - "(" - FormalParameterList? - ")" - "{" - FunctionBody - "}"
+
+FunctionExpression = FunctionTok - Identifier? - "(" - FormalParameterList? - ")" - "{" - FunctionTok - "}"
+
+FormalParameterList = Identifier ("," - Identifier)*
+
+UseStrictDirective = "use" S "strict" S ("," !(LineTerminator) SourceCharacter)*
+
+# Statements
+
+Statement =
+  Block
+  | VariableStatement
+  | EmptyStatement
+  | ExpressionStatement
+  | IfStatement
+  | IterationStatement
+  | ContinueStatement
+  | BreakStatement
+  | ReturnStatement
+  | WithStatement
+  | LabelledStatement
+  | SwitchStatement
+  | ThrowStatement
+  | TryStatement
+  | DebuggerStatement
+
+Block = "{" (- Statement)* - "}"
+
+VariableStatement = VarTok - VariableDeclaration  (- "," - VariableDeclaration)* EOS
+
+VariableDeclaration = Identifier (- "=" !("=") - AssignmentExpression)?
+
+VariableDeclarationNoIn = Identifier (- "=" !("=") - AssignmentExpressionNoIn)?
+
+VariableDeclarationListNoIn = VariableDeclarationNoIn (- "," - VariableDeclarationNoIn)*
+
+EmptyStatement = ";"
+
+ExpressionStatement = !("{" | FunctionTok) Expression:e EOS ~expression_statement(e)
+
+IfStatement = IfTok - "(" - Expression - ")" - Statement (- ElseTok - Statement)?
+
+IterationStatement = DoWhileStatement | WhileStatement | ForInStatement | ForStatement
+
+DoWhileStatement =
+  DoTok - Statement - WhileTok - "(" - Expression - ")" EOS
+
+WhileStatement =
+  WhileTok - "(" - Expression - ")" - Statement
+
+ForInStatement =
+  ForTok - "(" (ForInLeft|ForInVarLeft) InTok - Expression - ")" - Statement
+
+ForInLeft      = - LeftHandSideExpression - 
+ForInVarLeft   = - VarTok - VariableDeclarationNoIn - 
+
+ForStatement =
+  ForTok - "(" - (ForInit|ForVarInit)? - ";" - ForTest? - ";" - ForUpdate? - ")" - Statement
+
+ForInit      = ExpressionNoIn
+ForVarInit   = VarTok - VariableDeclarationListNoIn
+ForTest      = Expression
+ForUpdate    = Expression
+
+ContinueStatement =
+  ContinueTok SnoLB? (Identifier EOS | EOSnoLB)
+
+BreakStatement =
+  BreakTok SnoLB? (Identifier EOS | EOSnoLB)
+
+ReturnStatement =
+  ReturnTok SnoLB? (EOSnoLB | Expression EOS)
+
+WithStatement =
+  WithTok - "(" - Expression - ")" - Statement
+
+LabelledStatement =
+  Identifier - ":" - Statement
+
+SwitchStatement =
+  SwitchTok - "(" - Expression - ")" - "{" CaseClause* (DefaultClause CaseClause*)? - "}"
+
+CaseClause =
+  - CaseTok - Expression - ":" (- Statement)*
+
+DefaultClause =
+  - DefaultTok - ":" (- Statement)*
+
+ThrowStatement =
+  ThrowTok SnoLB? (EOSnoLB | Expression EOS)
+
+TryStatement =
+  TryTok - Block - (Catch - Finally? | Finally)
+
+Catch =
+  CatchTok - "(" - Identifier - ")" - Block
+
+Finally =
+  FinallyTok - Block
+
+DebuggerStatement =
+  DebuggerTok - EOS
+
+# Expressions
+
+Expression =
+  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs ~sequence_expression([expr].concat(exprs))
+
+ExpressionNoIn =
+  AssignmentExpressionNoIn (- "," - AssignmentExpressionNoIn)*
+
+AssignmentExpression =
+   LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right ~assignment_expression(op, left, right)
+ | ConditionalExpression
+
+AssignmentExpressionNoIn =
+   LeftHandSideExpression - AssignmentOperator - AssignmentExpressionNoIn
+ | ConditionalExpressionNoIn
+
+AssignmentOperator =
+  < "=" !("=") | "*=" | "|=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" > { text }
+
+ConditionalExpression =
+    LogicalOrExpression:left - "?" - AssignmentExpression:middle - ":" - AssignmentExpression:right ~conditional_expression(left, middle, right)
+  | LogicalOrExpression
+
+ConditionalExpressionNoIn =
+    LogicalOrExpressionNoIn:left - "?" AssignmentExpressionNoIn:middle - ":" - AssignmentExpressionNoIn:right ~conditional_expression(left, middle, right)
+  | LogicalOrExpressionNoIn
+
+LogicalOrExpression =
+    LogicalOrExpression:left - "||" - LogicalAndExpression:right ~logical_expression('||', left, right)
+  | LogicalAndExpression
+
+LogicalOrExpressionNoIn =
+    LogicalAndExpressionNoIn:left - "||" - LogicalAndExpressionNoIn:right ~logical_expression('||', left, right)
+  | LogicalAndExpressionNoIn
+
+LogicalAndExpression =
+    LogicalAndExpression:left - '&&' - BitwiseOrExpression:right ~logical_expression('&&', left, right)
+  | BitwiseOrExpression
+
+LogicalAndExpressionNoIn =
+    LogicalAndExpression:left - "&&" - BitwiseOrExpressionNoIn:right ~logical_expression('&&', left, right)
+  | BitwiseOrExpressionNoIn
+
+BitwiseOrExpression =
+    BitwiseOrExpression:left - "|" !("=") - BitwiseXOrExpression:right ~binary_expression('|', left, right)
+  | BitwiseXOrExpression
+
+BitwiseOrExpressionNoIn =
+    BitwiseOrExpressionNoIn:left - "|" !("=") - BitwiseXOrExpressionNoIn:right ~binary_expression('|', left, right)
+  | BitwiseXOrExpressionNoIn
+
+BitwiseXOrExpression =
+    BitwiseXOrExpression:left - "^" !("=") - BitwiseAndExpression:right ~binary_expression('^', left, right)
+  | BitwiseAndExpression
+
+BitwiseXOrExpressionNoIn =
+    BitwiseXOrExpressionNoIn:left - "^" !("=") - BitwiseAndExpressionNoIn:right ~binary_expression('^', left, right)
+  | BitwiseAndExpressionNoIn
+
+BitwiseAndExpression =
+    BitwiseAndExpression:left - "&" !("=") - EqualityExpression:right ~binary_expression('&', left, right)
+  | EqualityExpression
+
+BitwiseAndExpressionNoIn =
+    BitwiseAndExpressionNoIn:left - "&" !("=") - EqualityExpressionNoIn:right ~binary_expression('&', left, right)
+  | EqualityExpressionNoIn
+
+EqualityExpression =
+    EqualityExpression:left - EqualityOp:op - RelationalExpression:right ~binary_expression(op, left, right)
+  | RelationalExpression
+
+EqualityExpressionNoIn =
+    EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right ~binary_expression(op, left, right)
+  | RelationalExpressionNoIn
+
+EqualityOp = "===" | "!==" | "==" | "!="
+
+RelationalExpression =
+    RelationalExpression:left - RelationalOp:op - ShiftExpression:right ~binary_expression(op, left, right)
+  | ShiftExpression:expr
+
+RelationalExpressionNoIn =
+    RelationalExpressionNoIn:left - RelationalOpNoIn - ShiftExpression:right ~binary_expression(op, left, right)
+  | ShiftExpression
+
+RelationalOp =
+  "<=" | ">=" | "<" | ">" | InstanceOfTok | InTok
+
+RelationalOpNoIn =
+  "<=" | ">=" | "<" | ">" | InstanceOfTok
+
+ShiftExpression =
+    ShiftExpression:left - ShiftOp:op - AdditiveExpression:right ~binary_expression(op, left, right)
+  | AdditiveExpression
+
+ShiftOp =
+  "<<" | ">>>" | ">>"
+
+AdditiveExpression =
+    AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right ~binary_expression(op, left, right)
+  | MultiplicativeExpression
+
+AdditiveOp =
+   < "+" > !("+"|"=") { text }
+ | < "-" > !("-"|"=") { text }
+
+MultiplicativeExpression =
+    MultiplicativeExpression:left - MultiplicativeOp:op - UnaryExpression:right ~binary_expression(op, left, right)
+  | UnaryExpression
+
+MultiplicativeOp =
+  ("*" | "|" | "%") !("=")
+
+UnaryExpression =
+   PostfixExpression
+ | DeleteExpression
+ | VoidExpression
+ | TypeofExpression
+ | PreIncrementExpression
+ | PreDecrementExpression
+ | UnaryPlusExpression
+ | UnaryMinusExpression
+ | BitwiseNotExpression
+ | LogicalNotExpression
+
+DeleteExpression        = DeleteTok - UnaryExpression
+VoidExpression          = VoidTok - UnaryExpression
+TypeofExpression        = TypeofTok - UnaryExpression
+PreIncrementExpression  = "++" - UnaryExpression
+PreDecrementExpression  = "--" - UnaryExpression
+UnaryPlusExpression     = "+" - UnaryExpression
+UnaryMinusExpression    = "-" - UnaryExpression
+BitwiseNotExpression    = "~" - UnaryExpression
+LogicalNotExpression    = "!" - UnaryExpression
+
+PostfixExpression =
+    LeftHandSideExpression:argument SnoLB? PostfixOp:op ~update_expression(op, argument, false)
+  | LeftHandSideExpression
+
+PostfixOp = PostIncrementOp | PostDecrementOp
+PostIncrementOp = "++"
+PostDecrementOp = "--"
+
+LeftHandSideExpression =
+   CallExpression
+ | NewExpression
+
+CallExpression =
+    (MemberExpression | CallExpression):expr Arguments:arguments ~call_expression(expr, arguments)
+  | CallExpression:call - BracketAccessor:expr ~member_expression(call, expr, true)
+  | CallExpression:call - DotAccessor:expr ~member_expression(call, expr, false)
+
+BracketAccessor =
+  "[" - Expression:expr - "]" { expr }
+
+DotAccessor =
+  "." - IdentifierName:id ~identifier(id)
+
+Arguments =
+  "(" - ArgumentList? - ")"
+
+ArgumentList =
+  AssignmentExpression (- "," - AssignmentExpression)*
+
+NewExpression =
+   MemberExpression
+ | NewTok - NewExpression:expr ~new_expression(expr, [])
+
+MemberExpression =
+    PrimaryExpression
+  | FunctionExpression
+  | MemberExpression:left - BracketAccessor:right ~member_expression(left, right, true)
+  | MemberExpression:left - DotAccessor:right ~member_expression(left, right, false)
+  | NewTok - MemberExpression:expr Arguments:arguments ~new_expression(expr, arguments)
+
+PrimaryExpression =
+   ThisTok ~this_expression()
+ | Identifier:id ~identifier(id)
+ | Literal:val ~literal(val)
+ | ArrayLiteral
+ | ObjectLiteral
+ | "(" - Expression:expr - ")" # TODO { expr.parens = true }
+
+ArrayLiteral =
+   "[" - "]" ~array_expression([])
+   "[" (Elision | ElementList):list - "]" ~array_expression(list)
+   "[" ElementList:list "," Elision?:elision "]" ~array_expression(list.concat(elision || []))
+
+# TODO: Verify this logic
+ElementList =
+  Elision?:el1 - AssignmentExpression:expr (- "," Elision? - AssignmentExpression)*:list { (el1 || []).concat([expr]).concat(list) }
+
+Elision =
+    - "," { [nil] }
+  | Elision:el "," { el.push(nil) }
+
+ObjectLiteral =
+  "{" ( - PropertyNameAndValueList - ","? )? - "}"
+
+PropertyNameAndValueList =
+  PropertyAssignment (- "," - PropertyAssignment)*
+
+PropertyAssignment =
+   PropertyName - ":" - AssignmentExpression
+ | PropertyGetter
+ | PropertySetter
+
+PropertyGetter =
+  "get" - PropertyName - "(" - ")" - "{" - FunctionBody - "}"
+
+PropertySetter =
+  "set" - PropertyName - "(" - PropertySetParameterList - ")" - "{" - FunctionBody - "}"
+
+PropertyName =
+  IdentifierName | StringLiteral | NumericLiteral
+
+PropertySetParameterList =
+  Identifier
+
+Literal =
+    NullLiteral
+  | BooleanLiteral
+  | NumericLiteral:number { number }
+  | StringLiteral
+  | RegularExpressionLiteral
+
+NullLiteral
+  = NullTok
+
+BooleanLiteral
+  = TrueTok
+  | FalseTok
+
+NumericLiteral                  = < DecimalLiteral | HexIntegerLiteral > !(IdentifierStart) { text }
+
+DecimalLiteral                  = < DecimalIntegerLiteral "." DecimalDigit* ExponentPart? > { text }
+                                | < "." DecimalDigit+ ExponentPart? > { text }
+                                | < DecimalIntegerLiteral ExponentPart? > { text }
+
+DecimalIntegerLiteral           = < "0" | /[1-9]/ DecimalDigit* > { text }
+
+HexIntegerLiteral               = < "0x" HexDigit+ > { text }
+                                | < "0X" HexDigit+ > { text }
+
+DecimalDigit                    = /[0-9]/
+
+ExponentPart                    = /[eE]/ SignedInteger
+
+SignedInteger                   = DecimalDigit+
+                                | "+" DecimalDigit+
+                                | "-" DecimalDigit+
+
+
+DQ                              = "\""
+SQ                              = "'"
+
+StringLiteral                   = DQ < DoubleStringCharacter* > DQ ~string(text)
+                                | SQ < SingleStringCharacter* > SQ ~string(text)
+
+RS                              = "\\"
+
+DoubleStringCharacter           = !( DQ | RS | LineTerminator ) < SourceCharacter > { text }
+                                | < RS EscapeSequence > { text }
+                                | LineContinuation
+
+SingleStringCharacter           = !( SQ | RS | LineTerminator ) < SourceCharacter > { text }
+                                | < RS EscapeSequence > { text }
+                                | LineContinuation
+
+LineContinuation                = RS LineTerminatorSequence
+
+EscapeSequence                  = CharacterEscapeSequence
+                                | "0" !(DecimalDigit)
+                                | HexEscapeSequence
+                                | UnicodeEscapeSequence
+
+CharacterEscapeSequence         = SingleEscapeCharacter
+                                | NonEscapeCharacter
+
+SingleEscapeCharacter           = /['"\bfnrtv]/
+
+NonEscapeCharacter              = !(EscapeCharacter | LineTerminator) SourceCharacter
+
+EscapeCharacter                 = SingleEscapeCharacter
+                                | DecimalDigit
+                                | "x"
+                                | "u"
+
+HexEscapeSequence               = "x" HexDigit HexDigit
+
+UnicodeEscapeSequence           = "u" HexDigit HexDigit HexDigit HexDigit
+
+RegularExpressionLiteral        = "|" RegularExpressionBody "|" RegularExpressionFlags
+
+RegularExpressionBody           = RegularExpressionFirstChar RegularExpressionChar*
+
+RegularExpressionFirstChar      = !( LineTerminator | "*" | "\\" | "|" | "[" ) SourceCharacter
+                                | RegularExpressionBackslashSequence
+                                | RegularExpressionClass
+
+RegularExpressionChar           = !( LineTerminator | "\\" | "|" | "[" ) SourceCharacter
+                                | RegularExpressionBackslashSequence
+                                | RegularExpressionClass
+
+RegularExpressionBackslashSequence = RS !(LineTerminator) SourceCharacter
+
+RegularExpressionClass          = "[" RegularExpressionClassChar* "]"
+
+RegularExpressionClassChar      = !(LineTerminator | "\\" | "]" ) SourceCharacter
+                                | RegularExpressionBackslashSequence
+
+RegularExpressionFlags          = IdentifierPart*
+
+
+
