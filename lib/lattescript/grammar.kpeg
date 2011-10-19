@@ -11,8 +11,8 @@
 %% variable_declarator = ast VariableDeclarator(id, init)
 %% array_expression = ast ArrayExpression(elements, loc)
 %% object_expression = ast ObjectExpression(properties)
-%% function_declaration = ast FunctionDeclaration(id, params, body, isGen, isExp)
-%% function_expression = ast FunctionDeclaration(id, params, body, isGen, isExp)
+%% function_declaration = ast FunctionDeclaration(id, params, body)
+%% function_expression = ast FunctionDeclaration(id, params, body)
 %% return_statement = ast ReturnStatement(argument)
 %% try_statement = ast TryStatement(block, handler, finalizer)
 %% catch_clause = ast CatchClause(param, guard, body)
@@ -32,6 +32,7 @@
 %% update_expression = ast UpdateExpression(op, argument, prefix)
 %% call_expression = ast CallExpression(callee, args)
 %% new_expression = ast NewExpression(callee, args)
+%% property = ast Property(key, value, kind)
 %% member_expression = ast MemberExpression(object, property, computed)
 %% debugger_statement = ast DebuggerStatement()
 %% while_statement = ast WhileStatement(test, body)
@@ -82,7 +83,7 @@ Keyword =
 FutureReservedWord =
   "abstract" | "boolean" | "byte" | "char" | "class" | "const" | "double" | "enum" | "export" | "extends" | "final" | "float" | "goto" | "implements" | "import" | "interface" | "int" | "long" | "native" | "package" | "private" | "protected" | "public" | "short" | "static" | "super" | "synchronized" | "throws" | "transient" | "volatile"
 
-Identifier = !(ReservedWord) IdentifierName
+Identifier = !(ReservedWord) IdentifierName:name ~identifier(name)
 
 IdentifierName = < IdentifierStart IdentifierPart* > { text }
 
@@ -129,13 +130,14 @@ root = Program:p { p }
 
 Program = (- (Statement | FunctionDeclaration | Comment))*:s - ~program(s)
 
-FunctionBody = (- (Statement | FunctionDeclaration))* -
+FunctionBody = (- (Statement | FunctionDeclaration))*:statements - { statements }
 
-FunctionDeclaration = FunctionTok - Identifier - "(" - FormalParameterList? - ")" - "{" - FunctionBody - "}"
+FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" - FunctionBody:body - "}" ~function_declaration(id, params, body)
 
-FunctionExpression = FunctionTok - Identifier? - "(" - FormalParameterList? - ")" - "{" - FunctionTok - "}"
+FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" - FunctionBody:body - "}"
+  ~function_expression(id, params || [], body)
 
-FormalParameterList = Identifier ("," - Identifier)*
+FormalParameterList = Identifier:id ("," - Identifier)*:ids { [id].concat(ids) }
 
 UseStrictDirective = "use" S "strict" S ("," !(LineTerminator) SourceCharacter)*
 
@@ -158,61 +160,61 @@ Statement =
   | TryStatement
   | DebuggerStatement
 
-Block = "{" (- Statement)* - "}"
+Block = "{" (- Statement)*:statements - "}" ~block_statement(statements)
 
-VariableStatement = VarTok - VariableDeclaration  (- "," - VariableDeclaration)* EOS
+VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS ~variable_declaration("var", [decl].concat(decls))
 
-VariableDeclaration = Identifier (- "=" !("=") - AssignmentExpression)?
+VariableDeclaration = Identifier:id (- "=" !("=") - AssignmentExpression:expr)? ~variable_declarator(id, expr)
 
-VariableDeclarationNoIn = Identifier (- "=" !("=") - AssignmentExpressionNoIn)?
+VariableDeclarationNoIn = Identifier:id (- "=" !("=") - AssignmentExpressionNoIn:expr)? ~variable_declarator(id, expr)
 
-VariableDeclarationListNoIn = VariableDeclarationNoIn (- "," - VariableDeclarationNoIn)*
+VariableDeclarationListNoIn = VariableDeclarationNoIn:var (- "," - VariableDeclarationNoIn)*:vars { [var].concat(vars) }
 
-EmptyStatement = ";"
+EmptyStatement = ";" ~empty_statement()
 
 ExpressionStatement = !("{" | FunctionTok) Expression:e EOS ~expression_statement(e)
 
-IfStatement = IfTok - "(" - Expression - ")" - Statement (- ElseTok - Statement)?
+IfStatement = IfTok - "(" - Expression:expr - ")" - Statement:stmt1 (- ElseTok - Statement:stmt2)? ~if_statement(expr, stmt1, stmt2)
 
 IterationStatement = DoWhileStatement | WhileStatement | ForInStatement | ForStatement
 
 DoWhileStatement =
-  DoTok - Statement - WhileTok - "(" - Expression - ")" EOS
+  DoTok - Statement:stmt - WhileTok - "(" - Expression:expr - ")" EOS ~do_while_statement(stmt, expr)
 
 WhileStatement =
-  WhileTok - "(" - Expression - ")" - Statement
+  WhileTok - "(" - Expression:expr - ")" - Statement:stmt ~while_statement(expr, stmt)
 
 ForInStatement =
-  ForTok - "(" (ForInLeft|ForInVarLeft) InTok - Expression - ")" - Statement
+  ForTok - "(" (ForInLeft|ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt ~for_in_statement(left, right, stmt)
 
 ForInLeft      = - LeftHandSideExpression - 
 ForInVarLeft   = - VarTok - VariableDeclarationNoIn - 
 
 ForStatement =
-  ForTok - "(" - (ForInit|ForVarInit)? - ";" - ForTest? - ";" - ForUpdate? - ")" - Statement
+  ForTok - "(" - (ForInit|ForVarInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement ~for_statement(init, test, update)
 
 ForInit      = ExpressionNoIn
-ForVarInit   = VarTok - VariableDeclarationListNoIn
+ForVarInit   = VarTok - VariableDeclarationListNoIn:var { var }
 ForTest      = Expression
 ForUpdate    = Expression
 
 ContinueStatement =
-  ContinueTok SnoLB? (Identifier EOS | EOSnoLB)
+  ContinueTok SnoLB? (Identifier:id EOS | EOSnoLB) ~continue_statement(id)
 
 BreakStatement =
-  BreakTok SnoLB? (Identifier EOS | EOSnoLB)
+  BreakTok SnoLB? (Identifier:id EOS | EOSnoLB) ~break_statement(id)
 
 ReturnStatement =
-  ReturnTok SnoLB? (EOSnoLB | Expression EOS)
+  ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) ~return_statement(expr)
 
 WithStatement =
-  WithTok - "(" - Expression - ")" - Statement
+  WithTok - "(" - Expression:expr - ")" - Statement:statement ~with_statement(expr, statement)
 
 LabelledStatement =
-  Identifier - ":" - Statement
+  Identifier:id - ":" - Statement:statement ~labeled_statement(id, statement)
 
 SwitchStatement =
-  SwitchTok - "(" - Expression - ")" - "{" CaseClause* (DefaultClause CaseClause*)? - "}"
+  SwitchTok - "(" - Expression:expr - ")" - "{" CaseClause*:clauses (DefaultClause:default CaseClause*:more_clauses)? - "}" # TODO
 
 CaseClause =
   - CaseTok - Expression - ":" (- Statement)*
@@ -221,19 +223,20 @@ DefaultClause =
   - DefaultTok - ":" (- Statement)*
 
 ThrowStatement =
-  ThrowTok SnoLB? (EOSnoLB | Expression EOS)
+  ThrowTok SnoLB? (EOSnoLB | Expression:expr EOS) ~throw_statement(expr)
 
 TryStatement =
-  TryTok - Block - (Catch - Finally? | Finally)
+  TryTok - Block:try - Catch:catch - Finally?:finally ~try_statement(try, catch, finally)
+  TryTok - Block:try - Finally:finally ~try_statement(try, nil, finally)
 
 Catch =
-  CatchTok - "(" - Identifier - ")" - Block
+  CatchTok - "(" - Identifier:id - ")" - Block:block ~catch_clause(id, block)
 
 Finally =
-  FinallyTok - Block
+  FinallyTok - Block:block { block }
 
 DebuggerStatement =
-  DebuggerTok - EOS
+  DebuggerTok - EOS ~debugger_statement()
 
 # Expressions
 
@@ -241,14 +244,14 @@ Expression =
   AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs ~sequence_expression([expr].concat(exprs))
 
 ExpressionNoIn =
-  AssignmentExpressionNoIn (- "," - AssignmentExpressionNoIn)*
+  AssignmentExpressionNoIn:expr (- "," - AssignmentExpressionNoIn)*:exprs ~sequence_expression([expr].concat(exprs))
 
 AssignmentExpression =
    LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right ~assignment_expression(op, left, right)
  | ConditionalExpression
 
 AssignmentExpressionNoIn =
-   LeftHandSideExpression - AssignmentOperator - AssignmentExpressionNoIn
+   LeftHandSideExpression:expr - AssignmentOperator:op - AssignmentExpressionNoIn:right ~assignment_expression(op, left, right)
  | ConditionalExpressionNoIn
 
 AssignmentOperator =
@@ -350,33 +353,16 @@ MultiplicativeOp =
 
 UnaryExpression =
    PostfixExpression
- | DeleteExpression
- | VoidExpression
- | TypeofExpression
- | PreIncrementExpression
- | PreDecrementExpression
- | UnaryPlusExpression
- | UnaryMinusExpression
- | BitwiseNotExpression
- | LogicalNotExpression
+ | SimpleUnaryExpression
 
-DeleteExpression        = DeleteTok - UnaryExpression
-VoidExpression          = VoidTok - UnaryExpression
-TypeofExpression        = TypeofTok - UnaryExpression
-PreIncrementExpression  = "++" - UnaryExpression
-PreDecrementExpression  = "--" - UnaryExpression
-UnaryPlusExpression     = "+" - UnaryExpression
-UnaryMinusExpression    = "-" - UnaryExpression
-BitwiseNotExpression    = "~" - UnaryExpression
-LogicalNotExpression    = "!" - UnaryExpression
+SimpleUnaryExpression =
+  (DeleteTok | VoidTok | TypeofTok | "++" | "--" | "+" | "-" | "~" | "!"):op UnaryExpression:expr ~unary_expression(op, expr)
 
 PostfixExpression =
     LeftHandSideExpression:argument SnoLB? PostfixOp:op ~update_expression(op, argument, false)
   | LeftHandSideExpression
 
-PostfixOp = PostIncrementOp | PostDecrementOp
-PostIncrementOp = "++"
-PostDecrementOp = "--"
+PostfixOp = < ("++" | "--") > { text }
 
 LeftHandSideExpression =
    CallExpression
@@ -391,13 +377,13 @@ BracketAccessor =
   "[" - Expression:expr - "]" { expr }
 
 DotAccessor =
-  "." - IdentifierName:id ~identifier(id)
+  "." - IdentifierName:id { id }
 
 Arguments =
-  "(" - ArgumentList? - ")"
+  "(" - ArgumentList?:args - ")" { args }
 
 ArgumentList =
-  AssignmentExpression (- "," - AssignmentExpression)*
+  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs { [expr].concat(exprs) }
 
 NewExpression =
    MemberExpression
@@ -412,8 +398,8 @@ MemberExpression =
 
 PrimaryExpression =
    ThisTok ~this_expression()
- | Identifier:id ~identifier(id)
- | Literal:val ~literal(val)
+ | Identifier
+ | Literal
  | ArrayLiteral
  | ObjectLiteral
  | "(" - Expression:expr - ")" # TODO { expr.parens = true }
@@ -432,13 +418,13 @@ Elision =
   | Elision:el "," { el.push(nil) }
 
 ObjectLiteral =
-  "{" ( - PropertyNameAndValueList - ","? )? - "}"
+  "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list)
 
 PropertyNameAndValueList =
-  PropertyAssignment (- "," - PropertyAssignment)*
+  PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop].concat(props) }
 
 PropertyAssignment =
-   PropertyName - ":" - AssignmentExpression
+   PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, init)
  | PropertyGetter
  | PropertySetter
 
@@ -455,18 +441,18 @@ PropertySetParameterList =
   Identifier
 
 Literal =
-    NullLiteral
+    NullLiteral ~literal(nil)
   | BooleanLiteral
-  | NumericLiteral:number { number }
-  | StringLiteral
+  | NumericLiteral:number ~literal(number)
+  | StringLiteral:string ~literal(string)
   | RegularExpressionLiteral
 
 NullLiteral
   = NullTok
 
 BooleanLiteral
-  = TrueTok
-  | FalseTok
+  = TrueTok ~literal(true)
+  | FalseTok ~literal(false)
 
 NumericLiteral                  = < DecimalLiteral | HexIntegerLiteral > !(IdentifierStart) { text }
 
