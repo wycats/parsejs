@@ -6,10 +6,12 @@
 %% empty_statement = ast EmptyStatement()
 %% identifier = ast Identifier(name)
 %% literal = ast Literal(val)
+%% number = ast Number(val)
+%% string = ast String(val)
 %% this_expression = ast ThisExpression()
 %% variable_declaration = ast VariableDeclaration(kind, declarations)
 %% variable_declarator = ast VariableDeclarator(id, init)
-%% array_expression = ast ArrayExpression(elements, loc)
+%% array_expression = ast ArrayExpression(elements)
 %% object_expression = ast ObjectExpression(properties)
 %% function_declaration = ast FunctionDeclaration(id, params, body)
 %% function_expression = ast FunctionDeclaration(id, params, body)
@@ -28,7 +30,7 @@
 %% binary_expression = ast BinaryExpression(op, left, right)
 %% assignment_expression = ast AssignmentExpression(op, left, right)
 %% logical_expression = ast LogicalExpression(op, left, right)
-%% unary_expression = ast UnaryExpression(op, argument, prefix)
+%% unary_expression = ast UnaryExpression(op, argument)
 %% update_expression = ast UpdateExpression(op, argument, prefix)
 %% call_expression = ast CallExpression(callee, args)
 %% new_expression = ast NewExpression(callee, args)
@@ -356,7 +358,9 @@ UnaryExpression =
  | SimpleUnaryExpression
 
 SimpleUnaryExpression =
-  (DeleteTok | VoidTok | TypeofTok | "++" | "--" | "+" | "-" | "~" | "!"):op UnaryExpression:expr ~unary_expression(op, expr)
+  UnaryOp:op - UnaryExpression:expr ~unary_expression(op, expr)
+
+UnaryOp = < DeleteTok | VoidTok | TypeofTok | "++" | "--" | "+" | "-" | "~" | "!" > { text }
 
 PostfixExpression =
     LeftHandSideExpression:argument SnoLB? PostfixOp:op ~update_expression(op, argument, false)
@@ -380,7 +384,7 @@ DotAccessor =
   "." - IdentifierName:id { id }
 
 Arguments =
-  "(" - ArgumentList?:args - ")" { args }
+  "(" - ArgumentList?:args - ")" { args || [] }
 
 ArgumentList =
   AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs { [expr].concat(exprs) }
@@ -406,16 +410,19 @@ PrimaryExpression =
 
 ArrayLiteral =
    "[" - "]" ~array_expression([])
-   "[" (Elision | ElementList):list - "]" ~array_expression(list)
-   "[" ElementList:list "," Elision?:elision "]" ~array_expression(list.concat(elision || []))
+ | "[" - ElementList:list - "]" ~array_expression(list)
+ | "[" - Elision:el - ElementList:list - "]" ~array_expression(el.concat(list))
+ | "[" - ElementList:list - "," - Elision?:elision - "]" ~array_expression(list.concat(elision || []))
 
 # TODO: Verify this logic
 ElementList =
-  Elision?:el1 - AssignmentExpression:expr (- "," Elision? - AssignmentExpression)*:list { (el1 || []).concat([expr]).concat(list) }
+    Elision:elision - AssignmentExpression:expr { elision.concat([expr]) }
+  | ElementList:list - "," - Elision?:elision AssignmentExpression:expr { list.concat(elision || []).concat([expr]) }
+  | AssignmentExpression:expr { [expr] }
+  | Elision
 
 Elision =
-    - "," { [nil] }
-  | Elision:el "," { el.push(nil) }
+  (- ",")+:el { [nil] * el.size }
 
 ObjectLiteral =
   "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list)
@@ -424,7 +431,7 @@ PropertyNameAndValueList =
   PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop].concat(props) }
 
 PropertyAssignment =
-   PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, init)
+   PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, 'init')
  | PropertyGetter
  | PropertySetter
 
@@ -454,16 +461,16 @@ BooleanLiteral
   = TrueTok ~literal(true)
   | FalseTok ~literal(false)
 
-NumericLiteral                  = < DecimalLiteral | HexIntegerLiteral > !(IdentifierStart) { text }
+NumericLiteral                  = < DecimalLiteral:literal | HexIntegerLiteral:literal > !(IdentifierStart) { literal }
 
-DecimalLiteral                  = < DecimalIntegerLiteral "." DecimalDigit* ExponentPart? > { text }
-                                | < "." DecimalDigit+ ExponentPart? > { text }
-                                | < DecimalIntegerLiteral ExponentPart? > { text }
+DecimalLiteral                  = < DecimalIntegerLiteral "." DecimalDigit* ExponentPart? > ~number(text)
+                                | < "." DecimalDigit+ ExponentPart? > ~number(text)
+                                | < DecimalIntegerLiteral ExponentPart? > ~number(text)
 
-DecimalIntegerLiteral           = < "0" | /[1-9]/ DecimalDigit* > { text }
+DecimalIntegerLiteral           = < "0" | /[1-9]/ DecimalDigit* > ~number(text)
 
-HexIntegerLiteral               = < "0x" HexDigit+ > { text }
-                                | < "0X" HexDigit+ > { text }
+HexIntegerLiteral               = < "0x" HexDigit+ > ~number(text)
+                                | < "0X" HexDigit+ > ~number(text)
 
 DecimalDigit                    = /[0-9]/
 
