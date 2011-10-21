@@ -87,6 +87,14 @@ module LatteScript
       end + "]"
     end
 
+    def visit_ObjectExpression(expr)
+      "({" + expr.properties.map { |prop| accept(prop) }.join(", ") + "})"
+    end
+
+    def visit_Property(property)
+      accept(property.key) + ": " + accept(property.value)
+    end
+
   private
     def sp
       " "

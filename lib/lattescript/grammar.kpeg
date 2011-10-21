@@ -139,7 +139,7 @@ FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:p
 FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" - FunctionBody:body - "}"
   ~function_expression(id, params || [], body)
 
-FormalParameterList = Identifier:id ("," - Identifier)*:ids { [id].concat(ids) }
+FormalParameterList = Identifier:id ("," - Identifier)*:ids { [id] + ids }
 
 UseStrictDirective = "use" S "strict" S ("," !(LineTerminator) SourceCharacter)*
 
@@ -164,13 +164,13 @@ Statement =
 
 Block = "{" (- Statement)*:statements - "}" ~block_statement(statements)
 
-VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS ~variable_declaration("var", [decl].concat(decls))
+VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS ~variable_declaration("var", [decl] + decls)
 
 VariableDeclaration = Identifier:id (- "=" !("=") - AssignmentExpression:expr)? ~variable_declarator(id, expr)
 
 VariableDeclarationNoIn = Identifier:id (- "=" !("=") - AssignmentExpressionNoIn:expr)? ~variable_declarator(id, expr)
 
-VariableDeclarationListNoIn = VariableDeclarationNoIn:var (- "," - VariableDeclarationNoIn)*:vars { [var].concat(vars) }
+VariableDeclarationListNoIn = VariableDeclarationNoIn:var (- "," - VariableDeclarationNoIn)*:vars { [var] + vars }
 
 EmptyStatement = ";" ~empty_statement()
 
@@ -243,10 +243,10 @@ DebuggerStatement =
 # Expressions
 
 Expression =
-  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs ~sequence_expression([expr].concat(exprs))
+  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs ~sequence_expression([expr] + exprs)
 
 ExpressionNoIn =
-  AssignmentExpressionNoIn:expr (- "," - AssignmentExpressionNoIn)*:exprs ~sequence_expression([expr].concat(exprs))
+  AssignmentExpressionNoIn:expr (- "," - AssignmentExpressionNoIn)*:exprs ~sequence_expression([expr] + exprs)
 
 AssignmentExpression =
    LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right ~assignment_expression(op, left, right)
@@ -387,7 +387,7 @@ Arguments =
   "(" - ArgumentList?:args - ")" { args || [] }
 
 ArgumentList =
-  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs { [expr].concat(exprs) }
+  AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs { [expr] + exprs }
 
 NewExpression =
    MemberExpression
@@ -421,12 +421,11 @@ Elision =
     Elision:elision - "," { elision + [nil] }
   | "," { [nil] }
 
-
 ObjectLiteral =
-  "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list)
+  "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list || [])
 
 PropertyNameAndValueList =
-  PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop].concat(props) }
+  PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop] + props }
 
 PropertyAssignment =
    PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, 'init')
