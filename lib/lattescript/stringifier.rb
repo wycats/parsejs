@@ -1,6 +1,20 @@
 module LatteScript
   class Visitor
     def accept(node)
+      out = if node.cuddly?
+        " " << visit(node)
+      elsif @newline
+        @newline = false
+        current_indent << visit(node)
+      else
+        visit(node)
+      end
+
+      out << newline if node.statement? && !@newline
+      out
+    end
+
+    def visit(node)
       type = node.class.name.split("::").last
       send("visit_#{type}", node)
     end
@@ -12,8 +26,25 @@ module LatteScript
     end
 
     def initialize(ast)
-      p ast
       @ast = ast
+      @indent = 0
+    end
+
+    def indent
+      @indent += 1
+    end
+
+    def outdent
+      @indent -= 1
+    end
+
+    def current_indent
+      "  " * @indent
+    end
+
+    def newline
+      @newline = true
+      "\n"
     end
 
     def to_string
@@ -122,6 +153,46 @@ module LatteScript
       right = accept(expr.right)
 
       "#{left} #{expr.op} #{right}"
+    end
+
+    def visit_BlockStatement(statement)
+      out = "{" << newline
+      indent
+      statement.statements.each { |statement| out << accept(statement) }
+      outdent
+      out << "}"
+      @newline = false unless statement.cuddly
+      out
+    end
+
+    def cuddle(node, out, more=false)
+      if node.cuddly?
+        node.cuddle! if more
+      else
+        indent
+        out << newline
+      end
+
+      out << accept(node)
+
+      outdent unless node.cuddly?
+    end
+
+    def visit_IfStatement(statement)
+      consequent = statement.consequent
+      alternate = statement.alternate
+
+      out = "if (" + accept(statement.test) + ")"
+
+      cuddle(consequent, out, true)
+
+      if alternate
+        out << " " if consequent.cuddly?
+        out << current_indent << "else"
+        cuddle(alternate, out, false)
+      end
+
+      out
     end
 
   private

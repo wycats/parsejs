@@ -3,7 +3,7 @@
 %% ast-location = ::LatteScript::AST
 %% program = ast Program(elements)
 %% expression_statement = ast ExpressionStatement(expression)
-%% block_statement = ast BlockStatement(body)
+%% block_statement = ast BlockStatement(statements)
 %% empty_statement = ast EmptyStatement()
 %% identifier = ast Identifier(name)
 %% literal = ast Literal(val)
@@ -157,7 +157,7 @@ Statement =
   | BreakStatement
   | ReturnStatement
   | WithStatement
-  | LabelledStatement
+  | LabeledStatement
   | SwitchStatement
   | ThrowStatement
   | TryStatement
@@ -213,7 +213,7 @@ ReturnStatement =
 WithStatement =
   WithTok - "(" - Expression:expr - ")" - Statement:statement ~with_statement(expr, statement)
 
-LabelledStatement =
+LabeledStatement =
   Identifier:id - ":" - Statement:statement ~labeled_statement(id, statement)
 
 SwitchStatement =
@@ -316,7 +316,7 @@ EqualityExpressionNoIn =
     EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right ~binary_expression(op, left, right)
   | RelationalExpressionNoIn
 
-EqualityOp = "===" | "!==" | "==" | "!="
+EqualityOp = < "===" | "!==" | "==" | "!=" > { text }
 
 RelationalExpression =
     RelationalExpression:left - RelationalOp:op - ShiftExpression:right ~binary_expression(op, left, right)
@@ -352,7 +352,7 @@ MultiplicativeExpression =
   | UnaryExpression
 
 MultiplicativeOp =
-  < ("*" | "|" | "%") > !("=") { text }
+  < ("*" | "/" | "%") > !("=") { text }
 
 UnaryExpression =
    PostfixExpression

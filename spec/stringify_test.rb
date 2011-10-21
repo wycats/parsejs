@@ -1,11 +1,18 @@
 require "lattescript"
+require "digest"
 
 describe "stringifying" do
   def should_equal_itself(string)
+    string = "#{string}\n"
+
     ast = LatteScript.parse(string)
     new_string = LatteScript::Stringifier.to_string(ast)
 
-    string.should == new_string
+    new_string.should == string
+  end
+
+  def self.strip(string)
+    string.gsub(/^ {6}/, '').strip
   end
 
   [
@@ -43,9 +50,41 @@ describe "stringifying" do
     "a * (x + b) * y;",
     "a + (b + c);",
     "a + b + c;",
+    ("x + y - " * 100) + "z;",
+    "x.y = z;",
+    "get(id).text = f();",
+    "[,] = x;",
+    "x = 1e999 + y;",
+    "x = y / -1e999;",
+    "x = 0 / 0;",
+    "x = (-1e999).toString();",
+
+    # statements
+    strip(<<-IF),
+      if (a == b)
+        x();
+      else
+        y();
+    IF
+
+    strip(<<-IF),
+      if (a == b) {
+        x();
+      } else {
+        y();
+      }
+    IF
+
+    strip(<<-IF),
+      if (a == b)
+        if (b == c)
+          x();
+        else
+          y();
+    IF
   ].each do |string|
 
-    it "correctly parses and stringifies '#{string}'" do
+    it "correctly parses and stringifies '#{string.inspect}' - #{Digest::MD5.hexdigest(string)}" do
       should_equal_itself string
     end
 
