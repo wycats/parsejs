@@ -401,28 +401,26 @@ MemberExpression =
   | NewTok - MemberExpression:expr Arguments:arguments ~new_expression(expr, arguments)
 
 PrimaryExpression =
-   ThisTok ~this_expression()
- | Identifier
- | Literal
- | ArrayLiteral
- | ObjectLiteral
- | "(" - Expression:expr - ")" # TODO { expr.parens = true }
+    ThisTok ~this_expression()
+  | Identifier
+  | Literal
+  | ArrayLiteral
+  | ObjectLiteral
+  | "(" - Expression:expr - ")" # TODO { expr.parens = true }
 
 ArrayLiteral =
-   "[" - "]" ~array_expression([])
- | "[" - ElementList:list - "]" ~array_expression(list)
- | "[" - Elision:el - ElementList:list - "]" ~array_expression(el.concat(list))
- | "[" - ElementList:list - "," - Elision?:elision - "]" ~array_expression(list.concat(elision || []))
+    "[" - Elision?:elision - "]" ~array_expression(elision || [])
+  | "[" - ElementList:list - "]" ~array_expression(list)
+  | "[" - ElementList:list - "," - Elision?:elision - "]" ~array_expression(list + (elision || []))
 
-# TODO: Verify this logic
 ElementList =
-    Elision:elision - AssignmentExpression:expr { elision.concat([expr]) }
-  | ElementList:list - "," - Elision?:elision AssignmentExpression:expr { list.concat(elision || []).concat([expr]) }
-  | AssignmentExpression:expr { [expr] }
-  | Elision
+    ElementList:list - "," - Elision?:elision - AssignmentExpression:expr { list + (elision || []) + [expr] }
+  | Elision?:elision - AssignmentExpression:expr { (elision || []) + [expr] }
 
 Elision =
-  (- ",")+:el { [nil] * el.size }
+    Elision:elision - "," { elision + [nil] }
+  | "," { [nil] }
+
 
 ObjectLiteral =
   "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list)
