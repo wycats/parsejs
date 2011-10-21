@@ -25,10 +25,27 @@ describe "stringifying" do
     "[, 1, ,];",
     "[1, , , 2, , ,];",
     "[, , ,];",
-    "[0, 1, 2, \"x\"];"
+    "[0, 1, 2, \"x\"];",
+    "x.y.z;",
+    "x[y[z]];",
+    "x[\"y z\"];",
+    "(0).toString();",
+    "f()();",
+    "f((x, y));",
+    "f(x = 3);",
+    "x.y();",
+    "f(1, 2, 3, null, (g(), h));",
+    "new (x.y);",
+    "new (x());",
+    "(new x).y;",
+    "new (x().y);",
+    "a * x + b * y;",
+    "a * (x + b) * y;",
+    "a + (b + c);",
+    "a + b + c;",
   ].each do |string|
 
-    it "correctly parses and stringifies #{string.inspect}" do
+    it "correctly parses and stringifies '#{string}'" do
       should_equal_itself string
     end
 

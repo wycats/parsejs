@@ -1,5 +1,6 @@
 %% name = LatteScript::Parser
 
+%% ast-location = ::LatteScript::AST
 %% program = ast Program(elements)
 %% expression_statement = ast ExpressionStatement(expression)
 %% block_statement = ast BlockStatement(body)
@@ -351,7 +352,7 @@ MultiplicativeExpression =
   | UnaryExpression
 
 MultiplicativeOp =
-  ("*" | "|" | "%") !("=")
+  < ("*" | "|" | "%") > !("=") { text }
 
 UnaryExpression =
    PostfixExpression
@@ -373,15 +374,16 @@ LeftHandSideExpression =
  | NewExpression
 
 CallExpression =
-    (MemberExpression | CallExpression):expr Arguments:arguments ~call_expression(expr, arguments)
-  | CallExpression:call - BracketAccessor:expr ~member_expression(call, expr, true)
+    CallExpression:call - BracketAccessor:expr ~member_expression(call, expr, true)
   | CallExpression:call - DotAccessor:expr ~member_expression(call, expr, false)
+  | CallExpression:expr Arguments:arguments ~call_expression(expr, arguments)
+  | MemberExpression:expr Arguments:arguments ~call_expression(expr, arguments)
 
 BracketAccessor =
   "[" - Expression:expr - "]" { expr }
 
 DotAccessor =
-  "." - IdentifierName:id { id }
+  "." - IdentifierName:id ~identifier(id)
 
 Arguments =
   "(" - ArgumentList?:args - ")" { args || [] }
@@ -394,10 +396,10 @@ NewExpression =
  | NewTok - NewExpression:expr ~new_expression(expr, [])
 
 MemberExpression =
-    PrimaryExpression
-  | FunctionExpression
-  | MemberExpression:left - BracketAccessor:right ~member_expression(left, right, true)
+    MemberExpression:left - BracketAccessor:right ~member_expression(left, right, true)
   | MemberExpression:left - DotAccessor:right ~member_expression(left, right, false)
+  | PrimaryExpression
+  | FunctionExpression
   | NewTok - MemberExpression:expr Arguments:arguments ~new_expression(expr, arguments)
 
 PrimaryExpression =
@@ -406,7 +408,7 @@ PrimaryExpression =
   | Literal
   | ArrayLiteral
   | ObjectLiteral
-  | "(" - Expression:expr - ")" # TODO { expr.parens = true }
+  | "(" - Expression:expr - ")" { expr.parens = true; expr }
 
 ArrayLiteral =
     "[" - Elision?:elision - "]" ~array_expression(elision || [])

@@ -29,7 +29,11 @@ module LatteScript
     end
 
     def visit_SequenceExpression(expression)
-      expression.expressions.map { |expression| accept(expression) }.join(";")
+      out = ""
+      out << "(" if expression.parens
+      out << expression.expressions.map { |expression| accept(expression) }.join(", ")
+      out << ")" if expression.parens
+      out
     end
 
     def visit_Identifier(id)
@@ -40,7 +44,7 @@ module LatteScript
       case val = literal.val
       when nil
         "null"
-      when LatteScript::Parser::AST::Node
+      when LatteScript::AST::Node
         accept val
       else
         val.inspect
@@ -88,11 +92,36 @@ module LatteScript
     end
 
     def visit_ObjectExpression(expr)
-      "({" + expr.properties.map { |prop| accept(prop) }.join(", ") + "})"
+      "{" + expr.properties.map { |prop| accept(prop) }.join(", ") + "}"
     end
 
     def visit_Property(property)
       accept(property.key) + ": " + accept(property.value)
+    end
+
+    def visit_MemberExpression(expr)
+      left = accept(expr.object)
+      right = accept(expr.property)
+
+      if expr.computed
+        "#{left}[#{right}]"
+      else
+        "#{left}.#{right}"
+      end
+    end
+
+    def visit_NewExpression(expr)
+      left = "new " + accept(expr.callee)
+      args = "(" + expr.args.map { |arg| accept(arg) }.join(", ") + ")" if args
+
+      "#{left}#{args}"
+    end
+
+    def visit_BinaryExpression(expr)
+      left = accept(expr.left)
+      right = accept(expr.right)
+
+      "#{left} #{expr.op} #{right}"
     end
 
   private

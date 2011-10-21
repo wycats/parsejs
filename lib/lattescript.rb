@@ -1,6 +1,7 @@
 require "lattescript/version"
 require "lattescript/grammar.kpeg"
 require "lattescript/stringifier"
+require "lattescript/ast"
 
 module LatteScript
   def self.parse(string)
