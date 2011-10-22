@@ -82,6 +82,76 @@ describe "stringifying" do
         else
           y();
     IF
+
+    strip(<<-WHILE),
+      while (a == b)
+        c();
+    WHILE
+
+    strip(<<-IF),
+      if (a)
+        while (b)
+          ;
+      else
+        c();
+    IF
+
+    strip(<<-IF),
+      if (a)
+        while (b) {
+          ;
+        }
+      else
+        c();
+    IF
+
+    strip(<<-FOR),
+      for (;;)
+        ;
+    FOR
+
+    strip(<<-FOR),
+      for (var i = 0; i < a.length; i++) {
+        b[i] = a[i];
+      }
+    FOR
+
+    strip(<<-FOR),
+      for (t = (i in x); t; t = t[i])
+        ;
+    FOR
+
+    strip(<<-FOR),
+      for (var t = (i in x); t; t = t[i])
+        ;
+    FOR
+
+    strip(<<-FOR),
+      for (t = 1 << (i in x); t < 100; t++)
+        ;
+    FOR
+
+    strip(<<-FOR),
+      for (var i in arr)
+        dump(arr[i]);
+    FOR
+        #("for (var i in arr)\n" +
+         #"    dump(arr[i]);\n"),
+        #("for (own in boo)\n    ;\n"),
+        #('for ([k, v] in items(x))\n' +
+         #'    dump(k + ": " + v);\n'),
+        #("if (x) {\n" +
+         #"    switch (f(a)) {\n" +
+         #"    case f(b):\n" +
+         #"    case \"12\":\n" +
+         #"        throw exc;\n" +
+         #"    default:\n" +
+         #"        fall_through();\n" +
+         #"    case 99:\n" +
+         #"        succeed();\n" +
+         #"    }\n" +
+         #"}\n"),
+
   ].each do |string|
 
     it "correctly parses and stringifies '#{string.inspect}' - #{Digest::MD5.hexdigest(string)}" do

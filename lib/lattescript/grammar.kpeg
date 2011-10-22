@@ -188,16 +188,16 @@ WhileStatement =
   WhileTok - "(" - Expression:expr - ")" - Statement:stmt ~while_statement(expr, stmt)
 
 ForInStatement =
-  ForTok - "(" (ForInLeft|ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt ~for_in_statement(left, right, stmt)
+  ForTok - "(" (ForInLeft|ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt ~for_in_statement(left, right, stmt, nil)
 
-ForInLeft      = - LeftHandSideExpression - 
-ForInVarLeft   = - VarTok - VariableDeclarationNoIn - 
+ForInLeft      = - LeftHandSideExpression -
+ForInVarLeft   = - VarTok - VariableDeclarationNoIn:decl - ~variable_declaration("var", [decl])
 
 ForStatement =
-  ForTok - "(" - (ForInit|ForVarInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement ~for_statement(init, test, update)
+  ForTok - "(" - (ForInit|ForVarInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement:body ~for_statement(init, test, update, body)
 
 ForInit      = ExpressionNoIn
-ForVarInit   = VarTok - VariableDeclarationListNoIn:var { var }
+ForVarInit   = VarTok - VariableDeclarationListNoIn:list ~variable_declaration("var", list)
 ForTest      = Expression
 ForUpdate    = Expression
 
@@ -254,7 +254,7 @@ AssignmentExpression =
  | ConditionalExpression
 
 AssignmentExpressionNoIn =
-   LeftHandSideExpression:expr - AssignmentOperator:op - AssignmentExpressionNoIn:right ~assignment_expression(op, left, right)
+   LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpressionNoIn:right ~assignment_expression(op, left, right)
  | ConditionalExpressionNoIn
 
 AssignmentOperator =
@@ -327,17 +327,17 @@ RelationalExpressionNoIn =
   | ShiftExpression
 
 RelationalOp =
-  "<=" | ">=" | "<" | ">" | InstanceOfTok | InTok
+  < "<=" | ">=" | "<" | ">" | InstanceOfTok | InTok > { text }
 
 RelationalOpNoIn =
-  "<=" | ">=" | "<" | ">" | InstanceOfTok
+  < "<=" | ">=" | "<" | ">" | InstanceOfTok > { text }
 
 ShiftExpression =
     ShiftExpression:left - ShiftOp:op - AdditiveExpression:right ~binary_expression(op, left, right)
   | AdditiveExpression
 
 ShiftOp =
-  "<<" | ">>>" | ">>"
+  < "<<" | ">>>" | ">>" > { text }
 
 AdditiveExpression =
     AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right ~binary_expression(op, left, right)

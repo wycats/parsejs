@@ -1,6 +1,8 @@
 module LatteScript
   class Visitor
     def accept(node)
+      return "" if node.nil?
+
       out = if node.cuddly?
         " " << visit(node)
       elsif @newline
@@ -10,7 +12,7 @@ module LatteScript
         visit(node)
       end
 
-      out << newline if node.statement? && !@newline
+      out << newline if node.statement? && !@newline && !@skip_newline
       out
     end
 
@@ -45,6 +47,25 @@ module LatteScript
     def newline
       @newline = true
       "\n"
+    end
+
+    def cuddle(node, out, more=false)
+      if node.cuddly?
+        node.cuddle! if more
+      else
+        indent
+        out << newline
+      end
+
+      out << accept(node)
+
+      outdent unless node.cuddly?
+    end
+
+    def without_newline
+      old, @skip_newline = @skip_newline, true
+      yield
+      @skip_newline = old
     end
 
     def to_string
@@ -160,22 +181,9 @@ module LatteScript
       indent
       statement.statements.each { |statement| out << accept(statement) }
       outdent
-      out << "}"
+      out << current_indent << "}"
       @newline = false unless statement.cuddly
       out
-    end
-
-    def cuddle(node, out, more=false)
-      if node.cuddly?
-        node.cuddle! if more
-      else
-        indent
-        out << newline
-      end
-
-      out << accept(node)
-
-      outdent unless node.cuddly?
     end
 
     def visit_IfStatement(statement)
@@ -192,6 +200,79 @@ module LatteScript
         cuddle(alternate, out, false)
       end
 
+      out
+    end
+
+    def visit_WhileStatement(statement)
+      test = statement.test
+      body = statement.body
+
+      out = "while (" + accept(test) + ")"
+      cuddle(body, out, false)
+      out
+    end
+
+    def visit_EmptyStatement(empty)
+      ";"
+    end
+
+    def visit_ForStatement(statement)
+      init = statement.init
+      test = statement.test
+      update = statement.update
+      body = statement.body
+      out = ""
+
+      without_newline do
+        out << "for (" + accept(init) + ";"
+        test = accept(test)
+        out << " #{test}" unless test.empty?
+        out << ";"
+        update = accept(update)
+        out << " #{update}" unless update.empty?
+        out << ")"
+      end
+
+      cuddle(body, out, false)
+      out
+    end
+
+    def visit_VariableDeclaration(decl)
+      decl.kind + " " + decl.declarations.map { |d| accept(d) }.join(", ")
+    end
+
+    def visit_VariableDeclarator(decl)
+      out = accept(decl.id)
+      out << " = " + accept(decl.init) if decl.init
+      out
+    end
+
+    def visit_UpdateExpression(expr)
+      op = expr.op
+      prefix = expr.prefix
+
+      op += " " if op =~ /\w/
+      argument = accept(expr.argument)
+
+      if prefix
+        "#{op}#{argument}"
+      else
+        "#{argument}#{op}"
+      end
+    end
+
+    def visit_ForInStatement(statement)
+      left = statement.left
+      right = statement.right
+      body = statement.body
+
+      out = ""
+
+      without_newline do
+        out << "for (" + accept(left) + " in " + accept(right) + ")"
+      end
+
+      cuddle(body, out, false)
       out
     end
 
