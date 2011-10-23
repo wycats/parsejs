@@ -1,7 +1,11 @@
+require "json"
+
 module LatteScript
   class Visitor
     def accept(node)
       return "" if node.nil?
+
+      nl = @newline
 
       out = if node.cuddly?
         " " << visit(node)
@@ -12,7 +16,8 @@ module LatteScript
         visit(node)
       end
 
-      out << newline if node.statement? && !@newline && !@skip_newline
+      out << newline if node.needs_newline? && needs_newline?(out)
+
       out
     end
 
@@ -24,12 +29,17 @@ module LatteScript
 
   class Stringifier < Visitor
     def self.to_string(ast)
-      new(ast).to_string
+      stringifier = new(ast)
+      yield stringifier if block_given?
+      stringifier.to_string
     end
+
+    attr_accessor :include_comments
 
     def initialize(ast)
       @ast = ast
       @indent = 0
+      @include_comments = false
     end
 
     def indent
@@ -59,13 +69,31 @@ module LatteScript
 
       out << accept(node)
 
-      outdent unless node.cuddly?
+      if more && node.cuddly?
+        out << " "
+        @newline = false
+      end
+
+      unless node.cuddly?
+        outdent
+        out << current_indent if more
+      end
     end
 
     def without_newline
       old, @skip_newline = @skip_newline, true
-      yield
+      ret = yield
       @skip_newline = old
+      ret
+    end
+
+    def needs_newline?(out)
+      out !~ /\n$/ && !@skip_newline
+    end
+
+    def strip_newline(str)
+      @newline = false
+      str.sub(/\n$/, '')
     end
 
     def to_string
@@ -73,7 +101,7 @@ module LatteScript
     end
 
     def visit_Program(program)
-      program.elements.map { |element| accept(element) }.join(";")
+      program.elements.map { |element| accept(element) }.join("")
     end
 
     def visit_ExpressionStatement(statement)
@@ -83,7 +111,9 @@ module LatteScript
     def visit_SequenceExpression(expression)
       out = ""
       out << "(" if expression.parens
-      out << expression.expressions.map { |expression| accept(expression) }.join(", ")
+      exprs = expression.expressions.map { |expression| accept(expression) }.join(", ")
+      exprs = strip_newline(exprs) if expression.parens
+      out << exprs
       out << ")" if expression.parens
       out
     end
@@ -108,7 +138,7 @@ module LatteScript
     end
 
     def visit_String(string)
-      string.val.inspect
+      string.quote + string.val + string.quote
     end
 
     def visit_UnaryExpression(unary)
@@ -121,7 +151,10 @@ module LatteScript
     end
 
     def visit_CallExpression(expr)
-      accept(expr.callee) + "(" + expr.args.map { |arg| accept(arg) }.join(", ") + ")"
+      out = strip_newline(accept(expr.callee))
+      args = expr.args.map { |arg| accept(arg) }.join(", ")
+      args = strip_newline(args)
+      out << "(" + args + ")"
     end
 
     def visit_ArrayExpression(expr)
@@ -152,7 +185,7 @@ module LatteScript
     end
 
     def visit_MemberExpression(expr)
-      left = accept(expr.object)
+      left = strip_newline(accept(expr.object))
       right = accept(expr.property)
 
       if expr.computed
@@ -163,18 +196,21 @@ module LatteScript
     end
 
     def visit_NewExpression(expr)
+      args = expr.args
       left = "new " + accept(expr.callee)
-      args = "(" + expr.args.map { |arg| accept(arg) }.join(", ") + ")" if args
+      arg_string = "(" + expr.args.map { |arg| accept(arg) }.join(", ") + ")" unless args.empty?
 
-      "#{left}#{args}"
+      "#{left}#{arg_string}"
     end
 
     def visit_BinaryExpression(expr)
-      left = accept(expr.left)
+      left = strip_newline(accept(expr.left))
       right = accept(expr.right)
 
       "#{left} #{expr.op} #{right}"
     end
+
+    alias visit_LogicalExpression visit_BinaryExpression
 
     def visit_BlockStatement(statement)
       out = "{" << newline
@@ -192,11 +228,10 @@ module LatteScript
 
       out = "if (" + accept(statement.test) + ")"
 
-      cuddle(consequent, out, true)
+      cuddle(consequent, out, alternate)
 
       if alternate
-        out << " " if consequent.cuddly?
-        out << current_indent << "else"
+        out << "else"
         cuddle(alternate, out, false)
       end
 
@@ -210,6 +245,12 @@ module LatteScript
       out = "while (" + accept(test) + ")"
       cuddle(body, out, false)
       out
+    end
+
+    def visit_DoWhileStatement(statement)
+      out = "do"
+      cuddle(statement.body, out, true)
+      out << "while (" + accept(statement.test) + ");"
     end
 
     def visit_EmptyStatement(empty)
@@ -238,7 +279,9 @@ module LatteScript
     end
 
     def visit_VariableDeclaration(decl)
-      decl.kind + " " + decl.declarations.map { |d| accept(d) }.join(", ")
+      out = decl.kind + " " + decl.declarations.map { |d| accept(d) }.join(", ")
+      out << ";" if decl.semicolon
+      out
     end
 
     def visit_VariableDeclarator(decl)
@@ -274,6 +317,117 @@ module LatteScript
 
       cuddle(body, out, false)
       out
+    end
+
+    def visit_SwitchStatement(statement)
+      out = ""
+
+      without_newline do
+        out << "switch (" + accept(statement.discriminant) + ") {" << newline
+        indent
+      end
+
+      statement.cases.each { |c| out << accept(c) }
+      outdent
+      out << current_indent << "}" << newline
+    end
+
+    def visit_SwitchCase(switch)
+      if switch.test
+        out = "case #{accept(switch.test)}:" << newline
+      else
+        out = "default:" << newline
+      end
+
+      indent
+      switch.consequent.each { |statement| out << accept(statement) }
+      outdent
+      out
+    end
+
+    def visit_ThrowStatement(statement)
+      "throw #{accept(statement.argument)};"
+    end
+
+    def visit_TryStatement(statement)
+      handler = statement.handler
+      finalizer = statement.finalizer
+
+      out = "try"
+
+      cuddle(statement.block, out, handler || finalizer)
+
+      if handler
+        out << "catch (" + accept(handler.param) + ")"
+        cuddle(handler.body, out, finalizer)
+      end
+
+      if finalizer
+        out << "finally"
+        cuddle(finalizer, out, false)
+      end
+
+      out
+    end
+
+    def visit_FunctionDeclaration(decl)
+      id = decl.id
+      params = decl.params
+      body = decl.body
+
+      out = "function " + accept(id) + "("
+      out << params.map { |param| accept(param) }.join(", ")
+      out << ") {" << newline
+
+      indent
+      decl.body.each { |s| out << accept(s) }
+      outdent
+      out << current_indent << "}"
+    end
+
+    alias visit_FunctionExpression visit_FunctionDeclaration
+
+    def visit_ReturnStatement(statement)
+      "return " + accept(statement.argument) + ";"
+    end
+
+    def visit_BreakStatement(statement)
+      out = "break"
+      out << " " << accept(statement.label) if statement.label
+      out << ";"
+    end
+
+    def visit_ContinueStatement(statement)
+      out = "continue"
+      out << " " << accept(statement.label) if statement.label
+      out << ";"
+    end
+
+    def visit_ThisExpression(statement)
+      "this"
+    end
+
+    def visit_ConditionalExpression(expr)
+      out = strip_newline(accept(expr.test))
+      out << " ? " << strip_newline(accept(expr.consequent))
+      out << " : " << accept(expr.alternate)
+    end
+
+    def visit_DebuggerStatement(expr)
+      "debugger;"
+    end
+
+    def visit_Comment(comment)
+      return "" unless include_comments
+      if comment.type == 'singleline'
+        "//" + comment.body + newline
+      else
+        body = comment.body.split("\n")
+        first = body.shift
+        out = "/*" + first + newline + body.map { |s| "#{current_indent}#{s}" }.join(newline) + "*/"
+        out << "\n" if comment.newline
+        out
+      end
     end
 
   private

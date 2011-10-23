@@ -8,6 +8,10 @@ module LatteScript
       def statement?
         false
       end
+
+      def needs_newline?
+        false
+      end
     end
 
     class SequenceExpression
@@ -19,6 +23,10 @@ module LatteScript
 
       def cuddle!
         @cuddly = true
+      end
+
+      def needs_newline?
+        !@cuddly
       end
 
       def cuddly?
@@ -38,6 +46,10 @@ module LatteScript
 
     statements.each do |statement|
       statement.class_eval do
+        def needs_newline?
+          true
+        end
+
         def statement?
           true
         end
