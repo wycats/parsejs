@@ -9,6 +9,7 @@
 %% literal = ast Literal(val)
 %% number = ast Number(val)
 %% string = ast String(val, quote)
+%% regexp = ast RegExp(body, flags)
 %% this_expression = ast ThisExpression()
 %% variable_declaration = ast VariableDeclaration(kind, declarations, semicolon)
 %% variable_declarator = ast VariableDeclarator(id, init)
@@ -400,7 +401,7 @@ ArgumentList =
 
 NewExpression =
    MemberExpression
- | NewTok - NewExpression:expr ~new_expression(expr, [])
+ | NewTok - NewExpression:expr ~new_expression(expr, nil)
 
 MemberExpression =
     MemberExpression:left - BracketAccessor:right ~member_expression(left, right, true)
@@ -431,7 +432,7 @@ Elision =
   | "," { [nil] }
 
 ObjectLiteral =
-  "{" ( - PropertyNameAndValueList:list - ","? )? - "}" ~object_expression(list || [])
+  "{" - PropertyNameAndValueList?:list - ","? - "}" ~object_expression(list || [])
 
 PropertyNameAndValueList =
   PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop] + props }
@@ -460,7 +461,7 @@ Literal =
   | BooleanLiteral
   | NumericLiteral:number ~literal(number)
   | StringLiteral:string ~literal(string)
-  | RegularExpressionLiteral
+  | RegularExpressionLiteral:regex ~literal(regex)
 
 NullLiteral
   = NullTok
@@ -528,15 +529,15 @@ HexEscapeSequence               = "x" HexDigit HexDigit
 
 UnicodeEscapeSequence           = "u" HexDigit HexDigit HexDigit HexDigit
 
-RegularExpressionLiteral        = "|" RegularExpressionBody "|" RegularExpressionFlags
+RegularExpressionLiteral        = "/" RegularExpressionBody:body "/" RegularExpressionFlags:flags ~regexp(body, flags)
 
-RegularExpressionBody           = RegularExpressionFirstChar RegularExpressionChar*
+RegularExpressionBody           = < RegularExpressionFirstChar RegularExpressionChar* > { text }
 
-RegularExpressionFirstChar      = !( LineTerminator | "*" | "\\" | "|" | "[" ) SourceCharacter
+RegularExpressionFirstChar      = !( LineTerminator | "*" | "\\" | "/" | "[" ) SourceCharacter
                                 | RegularExpressionBackslashSequence
                                 | RegularExpressionClass
 
-RegularExpressionChar           = !( LineTerminator | "\\" | "|" | "[" ) SourceCharacter
+RegularExpressionChar           = !( LineTerminator | "\\" | "/" | "[" ) SourceCharacter
                                 | RegularExpressionBackslashSequence
                                 | RegularExpressionClass
 
@@ -547,7 +548,7 @@ RegularExpressionClass          = "[" RegularExpressionClassChar* "]"
 RegularExpressionClassChar      = !(LineTerminator | "\\" | "]" ) SourceCharacter
                                 | RegularExpressionBackslashSequence
 
-RegularExpressionFlags          = IdentifierPart*
+RegularExpressionFlags          = < IdentifierPart* > { text }
 
 
 

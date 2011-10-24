@@ -177,6 +177,10 @@ module LatteScript
     end
 
     def visit_ObjectExpression(expr)
+      unless expr.properties.respond_to?(:map)
+        require "pp"
+        pp expr
+      end
       "{" + expr.properties.map { |prop| accept(prop) }.join(", ") + "}"
     end
 
@@ -198,7 +202,7 @@ module LatteScript
     def visit_NewExpression(expr)
       args = expr.args
       left = "new " + accept(expr.callee)
-      arg_string = "(" + expr.args.map { |arg| accept(arg) }.join(", ") + ")" unless args.empty?
+      arg_string = "(" + args.map { |arg| accept(arg) }.join(", ") + ")" if args
 
       "#{left}#{arg_string}"
     end
@@ -428,6 +432,10 @@ module LatteScript
         out << "\n" if comment.newline
         out
       end
+    end
+
+    def visit_RegExp(regex)
+      "/#{regex.body}/#{regex.flags}"
     end
 
   private

@@ -1,5 +1,6 @@
 require "lattescript"
 require "digest"
+require "uglifier"
 
 describe "stringifying" do
   def should_equal_itself(string, should)
@@ -12,6 +13,19 @@ describe "stringifying" do
     end
 
     new_string.should == should
+  end
+
+  def should_match_compressed(string)
+    should = Uglifier.new.compile(string)
+
+    ast = LatteScript.parse(string)
+    new_string = LatteScript::Stringifier.to_string(ast) do |stringifier|
+      stringifier.include_comments = true
+    end
+
+    new_string = Uglifier.new.compile(new_string)
+
+    new_string.split(";").should == should.split(";")
   end
 
   def self.strip(string)
@@ -46,9 +60,13 @@ describe "stringifying" do
     "x.y();",
     "f(1, 2, 3, null, (g(), h));",
     "new (x.y);",
+    "new (x.y)();",
     "new (x());",
+    "new (x())();",
     "(new x).y;",
+    "(new x()).y;",
     "new (x().y);",
+    "new (x().y)();",
     "a * x + b * y;",
     "a * (x + b) * y;",
     "a + (b + c);",
@@ -329,6 +347,13 @@ describe "stringifying" do
     COMMENT
 
     strip(<<-SC),
+      var EachArray = SC.Object.extend(SC.Array, {});
+      var IS_OBSERVER = /^.+:(before|change)$/;
+    SC
+
+    "var x = y, z = (new Foo.Bar).baz(this, x, y);",
+
+    strip(<<-SC),
       // foo
       require('sproutcore-metal/core');
       require('sproutcore-metal/platform');
@@ -489,9 +514,19 @@ describe "stringifying" do
 
   ].each do |string, should|
 
-    it "correctly parses and stringifies '#{string.inspect}' - #{Digest::MD5.hexdigest(string)}" do
+    it "correctly parses and stringifies '#{string.inspect}' without compression - #{Digest::MD5.hexdigest(string)}" do
       should_equal_itself string, should || string
     end
 
+  end
+
+  [
+    "sproutcore-core.js",
+    "sproutcore-each-proxy.js"
+  ].each do |file|
+    contents = File.read(File.expand_path("../fixtures/#{file}", __FILE__))
+    it "correctly parses and stringifies #{file} for compression - #{Digest::MD5.hexdigest(contents)}" do
+      should_match_compressed contents
+    end
   end
 end
