@@ -111,7 +111,7 @@ module LatteScript
     def visit_SequenceExpression(expression)
       out = ""
       out << "(" if expression.parens
-      exprs = expression.expressions.map { |expression| accept(expression) }.join(", ")
+      exprs = expression.expressions.map { |e| accept(e) }.join(", ")
       exprs = strip_newline(exprs) if expression.parens
       out << exprs
       out << ")" if expression.parens
@@ -177,15 +177,22 @@ module LatteScript
     end
 
     def visit_ObjectExpression(expr)
-      unless expr.properties.respond_to?(:map)
-        require "pp"
-        pp expr
-      end
       "{" + expr.properties.map { |prop| accept(prop) }.join(", ") + "}"
     end
 
     def visit_Property(property)
-      accept(property.key) + ": " + accept(property.value)
+      comments = property.comments.map { |comment| accept(comment) }.join("")
+      comments + accept(property.key) + ": " + accept(property.value)
+    end
+
+    def visit_CommentedStatement(statement)
+      out = ""
+
+      if comments = statement.comments
+        comments.each { |comment| out << accept(comment) }
+      end
+
+      out << accept(statement.statement)
     end
 
     def visit_MemberExpression(expr)
@@ -219,7 +226,7 @@ module LatteScript
     def visit_BlockStatement(statement)
       out = "{" << newline
       indent
-      statement.statements.each { |statement| out << accept(statement) }
+      statement.statements.each { |s| out << accept(s) }
       outdent
       out << current_indent << "}"
       @newline = false unless statement.cuddly

@@ -8,7 +8,7 @@
 %% identifier = ast Identifier(name)
 %% literal = ast Literal(val)
 %% number = ast Number(val)
-%% string = ast String(val, quote)
+%% string_literal = ast String(val, quote)
 %% regexp = ast RegExp(body, flags)
 %% this_expression = ast ThisExpression()
 %% variable_declaration = ast VariableDeclaration(kind, declarations, semicolon)
@@ -36,7 +36,7 @@
 %% update_expression = ast UpdateExpression(op, argument, prefix)
 %% call_expression = ast CallExpression(callee, args)
 %% new_expression = ast NewExpression(callee, args)
-%% property = ast Property(key, value, kind)
+%% property = ast Property(key, value, kind, comments)
 %% member_expression = ast MemberExpression(object, property, computed)
 %% debugger_statement = ast DebuggerStatement()
 %% while_statement = ast WhileStatement(test, body)
@@ -48,29 +48,41 @@
 %% array_pattern = ast ArrayPattern(elements)
 %% spread = ast Spread(name)
 %% comment = ast Comment(body, type, newline)
+%% commented_statement = ast CommentedStatement(statement, comments)
 
 # Whitespace and Source Characters
 
-S = WhiteSpace | LineTerminatorSequence | Comment
-- = S*
-SnoComment = WhiteSpace | LineTerminatorSequence
+S =
+    WhiteSpace
+  | LineTerminatorSequence { nil }
+  | Comment
+
+- = S*:spaces { spaces.compact }
+
+SnoComment = (WhiteSpace | LineTerminatorSequence) { nil }
 
 SnoLB = (WhiteSpace | SingleLineComment | MultiLineCommentNoLB)+
 
-WhiteSpace = "\t" | "\v" | "\f" | " "
+WhiteSpace = /[\t\v\f ]+/ { nil }
 
 LF = "\n"
 CR = "\r"
 
-LineTerminator = LF | CR
-LineTerminatorSequence = LF | CR LF | CR
+LineTerminator = /[\n\r]+/
+LineTerminatorSequence = < /\n|\r\n|\r/ > { text }
 
 Comment = MultiLineComment | SingleLineComment
-MultiLineComment = "/*" < (!("*/") SourceCharacter)* > "*/" LineTerminatorSequence?:lf ~comment(text, 'multiline', lf)
-MultiLineCommentNoLB = "/*" < (!("*/") !(LineTerminator) SourceCharacter)* > "*/" LineTerminatorSequence?:lf ~comment(text, 'multiline', lf)
-SingleLineComment = "//" < /[^\n\r]*/ > ~comment(text, 'singleline', false)
 
-SourceCharacter = /[\u0000-\u10FFFF]/
+MultiLineCommentNoLB =
+  "/*" < (!("*/") SourceCharacter)* > "*/" ~comment(text, 'multiline', nil)
+
+MultiLineComment =
+    "/*" < (!("*/") SourceCharacter)* > "*/" LineTerminatorSequence:lf ~comment(text, 'multiline', lf)
+  | MultiLineCommentNoLB
+
+SingleLineComment = "//" < /[^\n\r]*/ > ~comment(text, 'singleline', nil)
+
+SourceCharacter = /[\u0000-\uffff]/
 
 EOS = - ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | - EOF
 EOSnoLB =  SnoLB? ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | SnoLB? EOF
@@ -83,10 +95,10 @@ ReservedWord =
   (Keyword | FutureReservedWord | "null" | "true" | "false") !(IdentifierPart)
 
 Keyword =
-  "break" | "case" | "catch" | "continue" | "debugger" | "default" | "delete" | "do" | "else" | "finally" | "for" | "function" | "if" | "instanceof" | "in" | "new" | "return" | "switch" | "this" | "throw" | "try" | "typeof" | "var" | "void" | "while" | "with"
+  /break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|instanceof|in|new|return|switch|this|throw|try|typeof|var|void|while|with/
 
 FutureReservedWord =
-  "abstract" | "boolean" | "byte" | "char" | "class" | "const" | "double" | "enum" | "export" | "extends" | "final" | "float" | "goto" | "implements" | "import" | "interface" | "int" | "long" | "native" | "package" | "private" | "protected" | "public" | "short" | "static" | "super" | "synchronized" | "throws" | "transient" | "volatile"
+  /abstract|boolean|byte|char|class|const|double|enum|export|extends|final|float|goto|implements|import|interface|int|long|native|package|private|protected|public|short|static|super|synchronized|throws|transient|volatile/
 
 Identifier = !(ReservedWord) IdentifierName:name ~identifier(name)
 
@@ -133,27 +145,26 @@ WithTok       = "with"       !(IdentifierPart)
 
 root = Program:p { p }
 
-Program = (SnoComment* (Statement | FunctionDeclaration))*:s - ~program(s)
+Program = (CommentedStatement)*:s - ~program(s)
 
-FunctionBody = (SnoComment* (Statement | FunctionDeclaration))*:statements SnoComment* { statements }
+FunctionBody = (CommentedStatement)*:statements SnoComment* { statements }
 
 FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body SnoComment* "}" ~function_declaration(id, params || [], body)
 
 FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body SnoComment* "}" ~function_expression(id, params || [], body)
 
-FormalParameterList = Identifier:id ("," - Identifier)*:ids { [id] + ids }
+FormalParameterList = Identifier:id (- "," - Identifier)*:ids { [id] + ids }
 
 UseStrictDirective = "use" S "strict" S ("," !(LineTerminator) SourceCharacter)*
 
 # Statements
 
 Statement =
-    Comment
-  | Block
-  | VariableStatement
-  | EmptyStatement
+    IfStatement
   | ExpressionStatement
-  | IfStatement
+  | VariableStatement
+  | Block
+  | EmptyStatement
   | IterationStatement
   | ContinueStatement
   | BreakStatement
@@ -164,8 +175,11 @@ Statement =
   | ThrowStatement
   | TryStatement
   | DebuggerStatement
+  | FunctionDeclaration
 
-Block = "{" (SnoComment* Statement)*:statements SnoComment* "}" ~block_statement(statements)
+CommentedStatement = -:comments Statement:s ~commented_statement(s, comments)
+
+Block = "{" (CommentedStatement)*:statements - "}" ~block_statement(statements)
 
 VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS ~variable_declaration("var", [decl] + decls, true)
 
@@ -196,7 +210,7 @@ ForInLeft      = - LeftHandSideExpression -
 ForInVarLeft   = - VarTok - VariableDeclarationNoIn:decl - ~variable_declaration("var", [decl], false)
 
 ForStatement =
-  ForTok - "(" - (ForInit|ForVarInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement:body ~for_statement(init, test, update, body)
+  ForTok - "(" - (ForVarInit|ForInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement:body ~for_statement(init, test, update, body)
 
 ForInit      = ExpressionNoIn
 ForVarInit   = VarTok - VariableDeclarationListNoIn:list ~variable_declaration("var", list, false)
@@ -208,7 +222,8 @@ ContinueStatement =
   | ContinueTok SnoLB? EOSnoLB ~continue_statement(nil)
 
 BreakStatement =
-  BreakTok SnoLB? (Identifier:id EOS | EOSnoLB) ~break_statement(id)
+    BreakTok SnoLB? Identifier:id ROS ~break_statement(id)
+  | BreakTok SnoLB? EOSnoLB ~break_statement(nil)
 
 ReturnStatement =
   ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) ~return_statement(expr)
@@ -273,7 +288,7 @@ ConditionalExpression =
   | LogicalOrExpression
 
 ConditionalExpressionNoIn =
-    LogicalOrExpressionNoIn:left - "?" AssignmentExpressionNoIn:middle - ":" - AssignmentExpressionNoIn:right ~conditional_expression(left, middle, right)
+    LogicalOrExpressionNoIn:left - "?" - AssignmentExpressionNoIn:middle - ":" - AssignmentExpressionNoIn:right ~conditional_expression(left, middle, right)
   | LogicalOrExpressionNoIn
 
 LogicalOrExpression =
@@ -384,8 +399,8 @@ LeftHandSideExpression =
 CallExpression =
     CallExpression:call - BracketAccessor:expr ~member_expression(call, expr, true)
   | CallExpression:call - DotAccessor:expr ~member_expression(call, expr, false)
-  | CallExpression:expr Arguments:arguments ~call_expression(expr, arguments)
-  | MemberExpression:expr Arguments:arguments ~call_expression(expr, arguments)
+  | CallExpression:expr - Arguments:arguments ~call_expression(expr, arguments)
+  | MemberExpression:expr - Arguments:arguments ~call_expression(expr, arguments)
 
 BracketAccessor =
   "[" - Expression:expr - "]" { expr }
@@ -432,15 +447,15 @@ Elision =
   | "," { [nil] }
 
 ObjectLiteral =
-  "{" - PropertyNameAndValueList?:list - ","? - "}" ~object_expression(list || [])
+  "{" SnoComment* PropertyNameAndValueList?:list - ","? - "}" ~object_expression(list || [])
 
 PropertyNameAndValueList =
-  PropertyAssignment:prop (- "," - PropertyAssignment)*:props { [prop] + props }
+  PropertyAssignment:prop (- "," SnoComment* PropertyAssignment)*:props { [prop] + props }
 
 PropertyAssignment =
-   PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, 'init')
- | PropertyGetter
- | PropertySetter
+    -:comments PropertyName:key - ":" - AssignmentExpression:value ~property(key, value, 'init', comments)
+  | PropertyGetter
+  | PropertySetter
 
 PropertyGetter =
   "get" - PropertyName - "(" - ")" - "{" - FunctionBody - "}"
@@ -493,8 +508,8 @@ SignedInteger                   = DecimalDigit+
 DQ                              = "\""
 SQ                              = "'"
 
-StringLiteral                   = DQ < DoubleStringCharacter* > DQ ~string(text, '"')
-                                | SQ < SingleStringCharacter* > SQ ~string(text, "'")
+StringLiteral                   = DQ < DoubleStringCharacter* > DQ ~string_literal(text, '"')
+                                | SQ < SingleStringCharacter* > SQ ~string_literal(text, "'")
 
 RS                              = "\\"
 

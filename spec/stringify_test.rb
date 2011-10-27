@@ -23,6 +23,7 @@ describe "stringifying" do
       stringifier.include_comments = true
     end
 
+    File.open("ewot", "w") { |file| file.puts new_string }
     new_string = Uglifier.new.compile(new_string)
 
     new_string.split(";").should == should.split(";")
@@ -203,6 +204,16 @@ describe "stringifying" do
       }
     TRY
 
+    strip(<<-BREAK),
+      if (last) {
+        if (outerToo) {
+          end = node.nextSibling;
+        } else {
+          break;
+        }
+      }
+    BREAK
+
     # functions
 
     strip(<<-FUNCTION),
@@ -235,6 +246,14 @@ describe "stringifying" do
     FUNCTION
 
     strip(<<-FUNCTION),
+      if (foo) {
+        function sigh(zomg, zomg2) {
+          hi();
+        }
+      }
+    FUNCTION
+
+    strip(<<-FUNCTION),
       (function () {
       }.x, function () {
       }.y);
@@ -257,6 +276,12 @@ describe "stringifying" do
     "this.x();",
 
     "(x.y()) ? z() : this.a();",
+
+    strip(<<-MISC),
+      for (var i = x ? y : z; i < 1; i++) {
+        common.jQuery();
+      }
+    MISC
 
     strip(<<-MISC),
       if (foo) {
@@ -332,6 +357,18 @@ describe "stringifying" do
     MISC
       function foo() {
         return bar;
+      }
+    SHOULD
+
+    [strip(<<-MISC), strip(<<-SHOULD)],
+      function foo(param1 /* comment */, // comment
+        param2 /* comment */) {
+
+        paramCommentEwot;
+     }
+    MISC
+      function foo(param1, param2) {
+        paramCommentEwot;
       }
     SHOULD
 
@@ -522,7 +559,13 @@ describe "stringifying" do
 
   [
     "sproutcore-core.js",
-    "sproutcore-each-proxy.js"
+    "sproutcore-each-proxy.js",
+    "sproutcore-native-array.js",
+    "metamorph.js",
+    "jquery-traversing.js",
+    "jquery-attributes.js",
+    "jquery-ajax.js",
+    "sizzle.js"
   ].each do |file|
     contents = File.read(File.expand_path("../fixtures/#{file}", __FILE__))
     it "correctly parses and stringifies #{file} for compression - #{Digest::MD5.hexdigest(contents)}" do
