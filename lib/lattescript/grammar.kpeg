@@ -50,6 +50,13 @@
 %% comment = ast Comment(body, type, newline)
 %% commented_statement = ast CommentedStatement(statement, comments)
 
+%%{
+  def initialize(string)
+    super
+    @benchmark = true
+  end
+%}
+
 # Whitespace and Source Characters
 
 S =
@@ -147,11 +154,11 @@ root = Program:p { p }
 
 Program = (CommentedStatement)*:s - ~program(s)
 
-FunctionBody = (CommentedStatement)*:statements SnoComment* { statements }
+FunctionBody = (CommentedStatement)*:statements - { statements }
 
-FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body SnoComment* "}" ~function_declaration(id, params || [], body)
+FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_declaration(id, params || [], body)
 
-FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body SnoComment* "}" ~function_expression(id, params || [], body)
+FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_expression(id, params || [], body)
 
 FormalParameterList = Identifier:id (- "," - Identifier)*:ids { [id] + ids }
 
