@@ -89,7 +89,7 @@ MultiLineComment =
 
 SingleLineComment = "//" < /[^\n\r]*/ > ~comment(text, 'singleline', nil)
 
-SourceCharacter = /[\u0000-\uffff]/
+SourceCharacter = /[\x00-\xff]/n
 
 EOS = - ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | - EOF
 EOSnoLB =  SnoLB? ";" | SnoLB? LineTerminatorSequence | SnoLB? &("}") | SnoLB? EOF
@@ -213,7 +213,7 @@ WhileStatement =
 ForInStatement =
   ForTok - "(" (ForInLeft|ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt ~for_in_statement(left, right, stmt, nil)
 
-ForInLeft      = - LeftHandSideExpression -
+ForInLeft      = - LeftHandSideExpression:expr - { expr }
 ForInVarLeft   = - VarTok - VariableDeclarationNoIn:decl - ~variable_declaration("var", [decl], false)
 
 ForStatement =

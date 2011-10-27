@@ -16,7 +16,9 @@ describe "stringifying" do
   end
 
   def should_match_compressed(string)
-    should = Uglifier.new.compile(string)
+    should = Uglifier.new.compile(string.force_encoding("UTF-8"))
+
+    string.force_encoding("BINARY")
 
     ast = LatteScript.parse(string)
     new_string = LatteScript::Stringifier.to_string(ast) do |stringifier|
@@ -24,7 +26,7 @@ describe "stringifying" do
     end
 
     File.open("ewot", "w") { |file| file.puts new_string }
-    new_string = Uglifier.new.compile(new_string)
+    new_string = Uglifier.new.compile(new_string.force_encoding("UTF-8"))
 
     new_string.split(";").should == should.split(";")
   end
@@ -565,9 +567,13 @@ describe "stringifying" do
     "jquery-traversing.js",
     "jquery-attributes.js",
     "jquery-ajax.js",
-    "sizzle.js"
+    "sizzle.js",
+    #"sproutcore.js",
+    "jquery-1.6.js",
+    "jquery-1.7.js"
   ].each do |file|
     contents = File.read(File.expand_path("../fixtures/#{file}", __FILE__))
+    contents.force_encoding("BINARY")
     it "correctly parses and stringifies #{file} for compression - #{Digest::MD5.hexdigest(contents)}" do
       should_match_compressed contents
     end
