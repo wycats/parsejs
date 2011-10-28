@@ -456,7 +456,11 @@ describe "stringifying" do
         }
         var actionSet = actionSetFor(obj, eventName, target, true), methodGuid = guidFor(method), ret;
         if (!actionSet[methodGuid]) {
-          actionSet[methodGuid] = {target: target, method: method, xform: xform};
+          actionSet[methodGuid] = {
+            target: target,
+            method: method,
+            xform: xform
+          };
         } else {
           actionSet[methodGuid].xform = xform;
         }
