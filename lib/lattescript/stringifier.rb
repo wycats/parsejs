@@ -3,22 +3,7 @@ require "json"
 module LatteScript
   class Visitor
     def accept(node)
-      return "" if node.nil?
-
-      nl = @newline
-
-      out = if node.cuddly?
-        " " << visit(node)
-      elsif @newline
-        @newline = false
-        current_indent << visit(node)
-      else
-        visit(node)
-      end
-
-      out << newline if node.needs_newline? && needs_newline?(out)
-
-      out
+      visit(node)
     end
 
     def map(node)
@@ -222,6 +207,25 @@ module LatteScript
       @ast = ast
       @indent = 0
       @include_comments = false
+    end
+
+    def accept(node)
+      return "" if node.nil?
+
+      nl = @newline
+
+      out = if node.cuddly?
+        " " << super
+      elsif @newline
+        @newline = false
+        current_indent << super
+      else
+        super
+      end
+
+      out << newline if node.needs_newline? && needs_newline?(out)
+
+      out
     end
 
     def indent
