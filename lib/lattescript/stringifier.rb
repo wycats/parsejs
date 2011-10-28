@@ -282,8 +282,8 @@ module LatteScript
       accept @ast
     end
 
-    def map(node)
-      node.map { |element| accept(element) }
+    def params(node)
+      map(node).join(", ")
     end
 
     def each(node)
@@ -301,7 +301,7 @@ module LatteScript
     def visit_SequenceExpression(expression)
       out = ""
       out << "(" if expression.parens
-      exprs = map(expression.expressions).join(", ")
+      exprs = params(expression.expressions)
       exprs = strip_newline(exprs) if expression.parens
       out << exprs
       out << ")" if expression.parens
@@ -344,7 +344,7 @@ module LatteScript
 
     def visit_CallExpression(expr)
       out = strip_newline(accept(expr.callee))
-      args = map(expr.args).join(", ")
+      args = params(expr.args)
       args = strip_newline(args)
       out << "(" + args + ")"
     end
@@ -383,7 +383,7 @@ module LatteScript
         outdent
         out << current_indent << "}"
       else
-        "{#{map(expr.properties).join(", ")}}"
+        "{#{params(expr.properties)}}"
       end
     end
 
@@ -578,11 +578,11 @@ module LatteScript
 
     def visit_FunctionDeclaration(decl)
       id = decl.id
-      params = decl.params
+      parameters = decl.params
       body = decl.body
 
       out = "function " + accept(id) + "("
-      out << map(params).join(", ")
+      out << params(parameters)
       out << ") {" << newline
 
       indent
