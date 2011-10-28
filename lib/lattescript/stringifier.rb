@@ -15,6 +15,29 @@ module LatteScript
       send("visit_#{type}", node)
     end
 
+    def visit_Program(program)
+      map(program.elements)
+    end
+
+    def visit_ExpressionStatement(statement)
+      accept(statement.expression)
+    end
+
+    def visit_SequenceExpression(expression)
+      [expression.parens, map(expression.expressions)]
+    end
+
+    def visit_Literal(literal)
+      case val = literal.val
+      when nil
+        "null"
+      when LatteScript::AST::Node
+        accept val
+      else
+        val
+      end
+    end
+
     def visit_Number(number)
       number.val
     end
@@ -103,8 +126,7 @@ module LatteScript
       [
         accept(statement.test),
         accept(statement.consequent),
-        accept(statement.alternate),
-        accept(statement.body)
+        statement.alternate && accept(statement.alternate)
       ]
     end
 
@@ -167,7 +189,7 @@ module LatteScript
 
     def visit_FunctionDeclaration(decl)
       [
-        accept(decl.id),
+        decl.id && accept(decl.id),
         map(decl.params),
         map(decl.body)
       ]
@@ -189,8 +211,60 @@ module LatteScript
       [accept(expr.test), accept(expr.consequent), accept(expr.alternate)]
     end
 
-    def visit_comment(comment)
+    def visit_Comment(comment)
       [comment.type, comment.body, comment.newline]
+    end
+  end
+
+  require "pp"
+
+  class CommentScanner < Visitor
+    def visit_CommentedStatement(comment)
+      unless comment.comments.empty?
+        case statement = comment.statement
+        when AST::SequenceExpression, AST::ExpressionStatement
+          statement = statement.expression.expressions[0]
+        end
+
+        print_comment(statement, comment.comments)
+        #puts
+        #puts "-" * 10 + statement.class.name + "-" * 10
+        #puts comment.comments.map { |c| c.body }.join("\n")
+        #puts "-" * (10 + statement.class.name.size + 10)
+        #puts
+
+        #puts Stringifier.to_string(Marshal.load(Marshal.dump(statement)))
+        #puts
+      end
+
+      super
+    end
+
+    def visit_Property(property)
+      unless property.comments.empty?
+        print_comment(property, property.comments)
+        #puts
+        #puts "-" * 10 + "Property" + "-" * 10
+        #puts property.comments.map { |c| c.body }.join("\n")
+        #puts "-" * (10 + "Property".size + 10)
+        #puts
+
+        #puts Stringifier.to_string(Marshal.load(Marshal.dump(property)))
+        #puts
+      end
+
+      super
+    end
+
+    def print_comment(node, comments)
+      puts
+      puts "-" * 10 + node.class.name + "-" * 10
+      puts comments.map { |c| c.body }.join("\n")
+      puts "-" * (10 + node.class.name.size + 10)
+      puts
+
+      puts Stringifier.to_string(Marshal.load(Marshal.dump(node)))
+      puts
     end
   end
 
