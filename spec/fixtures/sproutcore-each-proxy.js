@@ -216,5 +216,3 @@ SC.EachProxy = SC.Object.extend({
 
 });
 
-
-

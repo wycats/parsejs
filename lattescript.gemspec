@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = LatteScript::VERSION
 
   gem.add_dependency "kpeg"
+  gem.add_dependency "yard"
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "uglifier"
   gem.add_development_dependency "json"

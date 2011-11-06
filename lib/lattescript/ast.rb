@@ -14,6 +14,12 @@ module LatteScript
       end
     end
 
+    class Comment
+      def multiline?
+        @type == 'multiline'
+      end
+    end
+
     class SequenceExpression
       attr_accessor :parens
     end
