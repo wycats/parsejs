@@ -1,4 +1,5 @@
-require "lattescript/visitor"
+require "parsejs/visitor"
+require "yard"
 
 module ParseJS
   class CommentScanner < Visitor
@@ -54,6 +55,12 @@ module ParseJS
       puts
     ensure
       @current_comment = nil
+    end
+
+    def strip_leading_whitespace(string)
+      min = string.scan(/^[ \t]*(?=\S)/).min
+      size = min ? min.size : 0
+      string.gsub(/^[ \t]{#{size}}/, '')
     end
   end
 
@@ -121,17 +128,20 @@ module ParseJS
               extends = stringify(expr.right.callee).sub(/\.extend$/, '')
 
               if variable?(left_id)
-                puts "Found class: #{stringify(expr.left)} (extends #{extends}), but it was private"
+                # found private class
               else
                 klass = stringify(expr.left)
-                @current_class.push [klass, extends]
+
+                left_string = stringify(expr.left)
+                namespace_obj = build_namespace left_string.split(".")[0...-1].join("::")
+
+                class_name = left_string.split(".")[-1]
+
+                obj = YARD::CodeObjects::ClassObject.new(namespace_obj, class_name)
+                obj.docstring = stripped_comment
+
+                @current_class.push [klass, extends, obj]
                 in_class = true
-
-                puts "Found class: #{stringify(expr.left)} (extends #{extends})"
-
-                puts
-                puts stripped_comment
-                puts "-" * 80
               end
             end
           end
@@ -144,9 +154,31 @@ module ParseJS
       @current_class.pop if in_class
     end
 
+    def build_namespace(namespace)
+      if namespace.empty?
+        YARD::Registry.root
+      elsif ns = YARD::Registry.at(namespace)
+        ns
+      else
+        parts = namespace.split("::")
+        parent = parts[0...-1].join("::")
+
+        if parent.empty?
+          YARD::CodeObjects::NamespaceObject.new(YARD::Registry.root, parts[-1])
+        else
+          build_namespace parent
+          YARD::CodeObjects::NamespaceObject.new(parent, parts[-1])
+        end
+      end
+    end
+
     def current_class_name
       klass, parent = @current_class.last
       "#{klass} < #{parent}"
+    end
+
+    def current_yard_class
+      @current_class.last[2]
     end
 
     def visit_Property(property)
@@ -157,14 +189,11 @@ module ParseJS
 
       case property.value
       when FunctionDeclaration, FunctionExpression
-        puts "Found a method named #{property.key.val} in #{current_class_name}:"
+        obj = YARD::CodeObjects::MethodObject.new(current_yard_class, property.key.val)
+        obj.docstring = stripped_comment
       else
-        puts "Found a property named #{property.key.val} in #{current_class_name}:"
+        # found a non-method property
       end
-
-      puts
-      puts stripped_comment
-      puts "-" * 80
 
       super
     end
@@ -176,7 +205,8 @@ module ParseJS
       end
 
       string = comments.join("\n")
-      string.gsub!(/^[ \t]*\*?[ \t]*/, "").strip
+      string = string.gsub(/\A\**\n/, '')
+      strip_leading_whitespace(string)
     end
 
     def process_comment(*)
