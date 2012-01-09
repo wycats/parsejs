@@ -1,4 +1,4 @@
-require "lattescript/visitor"
+require "parsejs/visitor"
 require "json"
 
 module ParseJS
