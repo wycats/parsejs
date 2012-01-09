@@ -1,4 +1,4 @@
-require "lattescript"
+require "parsejs"
 require "digest"
 require "uglifier"
 
@@ -7,8 +7,8 @@ describe "stringifying" do
     string = "#{string}\n"
     should = "#{should}\n"
 
-    ast = LatteScript.parse(string)
-    new_string = LatteScript::Stringifier.to_string(ast) do |stringifier|
+    ast = ParseJS.parse(string)
+    new_string = ParseJS::Stringifier.to_string(ast) do |stringifier|
       stringifier.include_comments = true
     end
 
@@ -20,8 +20,8 @@ describe "stringifying" do
 
     string.force_encoding("BINARY")
 
-    ast = LatteScript.parse(string)
-    new_string = LatteScript::Stringifier.to_string(ast) do |stringifier|
+    ast = ParseJS.parse(string)
+    new_string = ParseJS::Stringifier.to_string(ast) do |stringifier|
       stringifier.include_comments = true
     end
 

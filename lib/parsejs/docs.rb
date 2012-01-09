@@ -1,8 +1,8 @@
 require "lattescript/visitor"
 
-module LatteScript
+module ParseJS
   class CommentScanner < Visitor
-    include LatteScript::AST
+    include ParseJS::AST
 
     def initialize(*)
       @current_comment = nil

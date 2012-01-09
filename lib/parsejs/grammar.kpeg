@@ -1,6 +1,6 @@
-%% name = LatteScript::Parser
+%% name = ParseJS::Parser
 
-%% ast-location = ::LatteScript::AST
+%% ast-location = ::ParseJS::AST
 %% program = ast Program(elements)
 %% expression_statement = ast ExpressionStatement(expression)
 %% block_statement = ast BlockStatement(statements)

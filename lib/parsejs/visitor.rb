@@ -1,4 +1,4 @@
-module LatteScript
+module ParseJS
   class Visitor
     def accept(node)
       visit(node)
@@ -29,7 +29,7 @@ module LatteScript
       case val = literal.val
       when nil
         "null"
-      when LatteScript::AST::Node
+      when ParseJS::AST::Node
         accept val
       else
         val

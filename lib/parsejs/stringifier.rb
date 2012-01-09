@@ -1,7 +1,7 @@
 require "lattescript/visitor"
 require "json"
 
-module LatteScript
+module ParseJS
   require "pp"
 
   class Stringifier < Visitor
@@ -126,7 +126,7 @@ module LatteScript
       case val = literal.val
       when nil
         "null"
-      when LatteScript::AST::Node
+      when ParseJS::AST::Node
         accept val
       else
         val.inspect

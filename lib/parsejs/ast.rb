@@ -1,4 +1,4 @@
-module LatteScript
+module ParseJS
   module AST
     class Node
       def cuddly?
