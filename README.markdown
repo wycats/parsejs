@@ -27,18 +27,24 @@ from the code.
 ParseJS is provided as a Rubygem. At the moment, you can use it in your Gemfile by using
 Bundler's git feature.
 
-		gem "parsejs", :git => "git://github.com/wycats/parsejs.git"
+```ruby
+gem "parsejs", :git => "git://github.com/wycats/parsejs.git"
+```
 
 You can parse a String of JavaScript and receive an AST by using
 `ParseJS.parse`.
 
-		ast = ParseJS.parse(some_data)
+```ruby
+ast = ParseJS.parse(some_data)
+```
 
 You can convert the AST back into a JavaScript String using the
 stringifier. You can mutate the AST before converting it into a String
 if you wish.
 
-	 ParseJS::Stringifier.to_string(ast)	
+```
+ParseJS::Stringifier.to_string(ast)
+```
 
 You can write your own AST walker without implementing visitors for all
 nodes by subclassing `ParseJS::Visitor`. Take a look
