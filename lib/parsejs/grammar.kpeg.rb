@@ -1,16 +1,16 @@
 require 'kpeg/compiled_parser'
 
-class LatteScript::Parser < KPeg::CompiledParser
+class ParseJS::Parser < KPeg::CompiledParser
 
 
   def initialize(string)
     super
     @benchmark = true
   end
-%
 
 
-  module ::LatteScript::AST
+
+  module ::ParseJS::AST
     class Node; end
     class ArrayExpression < Node
       def initialize(elements)
@@ -390,148 +390,148 @@ class LatteScript::Parser < KPeg::CompiledParser
     end
   end
   def array_expression(elements)
-    ::LatteScript::AST::ArrayExpression.new(elements)
+    ::ParseJS::AST::ArrayExpression.new(elements)
   end
   def array_pattern(elements)
-    ::LatteScript::AST::ArrayPattern.new(elements)
+    ::ParseJS::AST::ArrayPattern.new(elements)
   end
   def assignment_expression(op, left, right)
-    ::LatteScript::AST::AssignmentExpression.new(op, left, right)
+    ::ParseJS::AST::AssignmentExpression.new(op, left, right)
   end
   def binary_expression(op, left, right)
-    ::LatteScript::AST::BinaryExpression.new(op, left, right)
+    ::ParseJS::AST::BinaryExpression.new(op, left, right)
   end
   def block_statement(statements)
-    ::LatteScript::AST::BlockStatement.new(statements)
+    ::ParseJS::AST::BlockStatement.new(statements)
   end
   def break_statement(label)
-    ::LatteScript::AST::BreakStatement.new(label)
+    ::ParseJS::AST::BreakStatement.new(label)
   end
   def call_expression(callee, args)
-    ::LatteScript::AST::CallExpression.new(callee, args)
+    ::ParseJS::AST::CallExpression.new(callee, args)
   end
   def catch_clause(param, body)
-    ::LatteScript::AST::CatchClause.new(param, body)
+    ::ParseJS::AST::CatchClause.new(param, body)
   end
   def comment(body, type, newline)
-    ::LatteScript::AST::Comment.new(body, type, newline)
+    ::ParseJS::AST::Comment.new(body, type, newline)
   end
   def commented_statement(statement, comments)
-    ::LatteScript::AST::CommentedStatement.new(statement, comments)
+    ::ParseJS::AST::CommentedStatement.new(statement, comments)
   end
   def conditional_expression(test, consequent, alternate)
-    ::LatteScript::AST::ConditionalExpression.new(test, consequent, alternate)
+    ::ParseJS::AST::ConditionalExpression.new(test, consequent, alternate)
   end
   def continue_statement(label)
-    ::LatteScript::AST::ContinueStatement.new(label)
+    ::ParseJS::AST::ContinueStatement.new(label)
   end
   def debugger_statement()
-    ::LatteScript::AST::DebuggerStatement.new()
+    ::ParseJS::AST::DebuggerStatement.new()
   end
   def do_while_statement(body, test)
-    ::LatteScript::AST::DoWhileStatement.new(body, test)
+    ::ParseJS::AST::DoWhileStatement.new(body, test)
   end
   def empty_statement()
-    ::LatteScript::AST::EmptyStatement.new()
+    ::ParseJS::AST::EmptyStatement.new()
   end
   def expression_statement(expression)
-    ::LatteScript::AST::ExpressionStatement.new(expression)
+    ::ParseJS::AST::ExpressionStatement.new(expression)
   end
   def for_in_statement(left, right, body, type)
-    ::LatteScript::AST::ForInStatement.new(left, right, body, type)
+    ::ParseJS::AST::ForInStatement.new(left, right, body, type)
   end
   def for_statement(init, test, update, body)
-    ::LatteScript::AST::ForStatement.new(init, test, update, body)
+    ::ParseJS::AST::ForStatement.new(init, test, update, body)
   end
   def function_declaration(id, params, body)
-    ::LatteScript::AST::FunctionDeclaration.new(id, params, body)
+    ::ParseJS::AST::FunctionDeclaration.new(id, params, body)
   end
   def function_expression(id, params, body)
-    ::LatteScript::AST::FunctionExpression.new(id, params, body)
+    ::ParseJS::AST::FunctionExpression.new(id, params, body)
   end
   def identifier(val)
-    ::LatteScript::AST::Identifier.new(val)
+    ::ParseJS::AST::Identifier.new(val)
   end
   def if_statement(test, consequent, alternate)
-    ::LatteScript::AST::IfStatement.new(test, consequent, alternate)
+    ::ParseJS::AST::IfStatement.new(test, consequent, alternate)
   end
   def labeled_statement(label, body)
-    ::LatteScript::AST::LabeledStatement.new(label, body)
+    ::ParseJS::AST::LabeledStatement.new(label, body)
   end
   def literal(val)
-    ::LatteScript::AST::Literal.new(val)
+    ::ParseJS::AST::Literal.new(val)
   end
   def logical_expression(op, left, right)
-    ::LatteScript::AST::LogicalExpression.new(op, left, right)
+    ::ParseJS::AST::LogicalExpression.new(op, left, right)
   end
   def member_expression(object, property, computed)
-    ::LatteScript::AST::MemberExpression.new(object, property, computed)
+    ::ParseJS::AST::MemberExpression.new(object, property, computed)
   end
   def new_expression(callee, args)
-    ::LatteScript::AST::NewExpression.new(callee, args)
+    ::ParseJS::AST::NewExpression.new(callee, args)
   end
   def number(val)
-    ::LatteScript::AST::Number.new(val)
+    ::ParseJS::AST::Number.new(val)
   end
   def object_expression(properties)
-    ::LatteScript::AST::ObjectExpression.new(properties)
+    ::ParseJS::AST::ObjectExpression.new(properties)
   end
   def object_pattern(properties)
-    ::LatteScript::AST::ObjectPattern.new(properties)
+    ::ParseJS::AST::ObjectPattern.new(properties)
   end
   def program(elements)
-    ::LatteScript::AST::Program.new(elements)
+    ::ParseJS::AST::Program.new(elements)
   end
   def property(key, value, kind, comments)
-    ::LatteScript::AST::Property.new(key, value, kind, comments)
+    ::ParseJS::AST::Property.new(key, value, kind, comments)
   end
   def regexp(body, flags)
-    ::LatteScript::AST::RegExp.new(body, flags)
+    ::ParseJS::AST::RegExp.new(body, flags)
   end
   def return_statement(label)
-    ::LatteScript::AST::ReturnStatement.new(label)
+    ::ParseJS::AST::ReturnStatement.new(label)
   end
   def sequence_expression(expressions)
-    ::LatteScript::AST::SequenceExpression.new(expressions)
+    ::ParseJS::AST::SequenceExpression.new(expressions)
   end
   def spread(name)
-    ::LatteScript::AST::Spread.new(name)
+    ::ParseJS::AST::Spread.new(name)
   end
   def string_literal(val, quote)
-    ::LatteScript::AST::String.new(val, quote)
+    ::ParseJS::AST::String.new(val, quote)
   end
   def switch_case(test, consequent)
-    ::LatteScript::AST::SwitchCase.new(test, consequent)
+    ::ParseJS::AST::SwitchCase.new(test, consequent)
   end
   def switch_statement(discriminant, cases)
-    ::LatteScript::AST::SwitchStatement.new(discriminant, cases)
+    ::ParseJS::AST::SwitchStatement.new(discriminant, cases)
   end
   def this_expression()
-    ::LatteScript::AST::ThisExpression.new()
+    ::ParseJS::AST::ThisExpression.new()
   end
   def throw_statement(argument)
-    ::LatteScript::AST::ThrowStatement.new(argument)
+    ::ParseJS::AST::ThrowStatement.new(argument)
   end
   def try_statement(block, handler, finalizer)
-    ::LatteScript::AST::TryStatement.new(block, handler, finalizer)
+    ::ParseJS::AST::TryStatement.new(block, handler, finalizer)
   end
   def unary_expression(op, argument)
-    ::LatteScript::AST::UnaryExpression.new(op, argument)
+    ::ParseJS::AST::UnaryExpression.new(op, argument)
   end
   def update_expression(op, argument, prefix)
-    ::LatteScript::AST::UpdateExpression.new(op, argument, prefix)
+    ::ParseJS::AST::UpdateExpression.new(op, argument, prefix)
   end
   def variable_declaration(kind, declarations, semicolon)
-    ::LatteScript::AST::VariableDeclaration.new(kind, declarations, semicolon)
+    ::ParseJS::AST::VariableDeclaration.new(kind, declarations, semicolon)
   end
   def variable_declarator(id, init)
-    ::LatteScript::AST::VariableDeclarator.new(id, init)
+    ::ParseJS::AST::VariableDeclarator.new(id, init)
   end
   def while_statement(test, body)
-    ::LatteScript::AST::WhileStatement.new(test, body)
+    ::ParseJS::AST::WhileStatement.new(test, body)
   end
   def with_statement(object, body)
-    ::LatteScript::AST::WithStatement.new(object, body)
+    ::ParseJS::AST::WithStatement.new(object, body)
   end
 
   # S = (WhiteSpace | LineTerminatorSequence { nil } | Comment)
@@ -765,7 +765,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # MultiLineCommentNoLB = "/*" < (!"*/" SourceCharacter)* > "*/" {self.comment(text, 'multiline', nil)}
+  # MultiLineCommentNoLB = "/*" < (!"*/" SourceCharacter)* > "*/" {comment(text, 'multiline', nil)}
   def _MultiLineCommentNoLB
 
     _save = self.pos
@@ -810,7 +810,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.comment(text, 'multiline', nil); end
+      @result = begin; comment(text, 'multiline', nil); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -822,7 +822,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # MultiLineComment = ("/*" < (!"*/" SourceCharacter)* > "*/" LineTerminatorSequence:lf {self.comment(text, 'multiline', lf)} | MultiLineCommentNoLB)
+  # MultiLineComment = ("/*" < (!"*/" SourceCharacter)* > "*/" LineTerminatorSequence:lf {comment(text, 'multiline', lf)} | MultiLineCommentNoLB)
   def _MultiLineComment
 
     _save = self.pos
@@ -876,7 +876,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.comment(text, 'multiline', lf); end
+        @result = begin; comment(text, 'multiline', lf); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -896,7 +896,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # SingleLineComment = "//" < /[^\n\r]*/ > {self.comment(text, 'singleline', nil)}
+  # SingleLineComment = "//" < /[^\n\r]*/ > {comment(text, 'singleline', nil)}
   def _SingleLineComment
 
     _save = self.pos
@@ -915,7 +915,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.comment(text, 'singleline', nil); end
+      @result = begin; comment(text, 'singleline', nil); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -1196,7 +1196,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Identifier = !ReservedWord IdentifierName:name {self.identifier(name)}
+  # Identifier = !ReservedWord IdentifierName:name {identifier(name)}
   def _Identifier
 
     _save = self.pos
@@ -1215,7 +1215,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.identifier(name); end
+      @result = begin; identifier(name); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2036,7 +2036,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Program = CommentedStatement*:s - {self.program(s)}
+  # Program = CommentedStatement*:s - {program(s)}
   def _Program
 
     _save = self.pos
@@ -2059,7 +2059,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.program(s); end
+      @result = begin; program(s); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2106,7 +2106,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {self.function_declaration(id, params || [], body)}
+  # FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_declaration(id, params || [], body)}
   def _FunctionDeclaration
 
     _save = self.pos
@@ -2199,7 +2199,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.function_declaration(id, params || [], body); end
+      @result = begin; function_declaration(id, params || [], body); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2211,7 +2211,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {self.function_expression(id, params || [], body)}
+  # FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_expression(id, params || [], body)}
   def _FunctionExpression
 
     _save = self.pos
@@ -2310,7 +2310,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.function_expression(id, params || [], body); end
+      @result = begin; function_expression(id, params || [], body); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2504,7 +2504,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # CommentedStatement = -:comments Statement:s {self.commented_statement(s, comments)}
+  # CommentedStatement = -:comments Statement:s {commented_statement(s, comments)}
   def _CommentedStatement
 
     _save = self.pos
@@ -2521,7 +2521,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.commented_statement(s, comments); end
+      @result = begin; commented_statement(s, comments); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2533,7 +2533,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Block = "{" CommentedStatement*:statements - "}" {self.block_statement(statements)}
+  # Block = "{" CommentedStatement*:statements - "}" {block_statement(statements)}
   def _Block
 
     _save = self.pos
@@ -2566,7 +2566,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.block_statement(statements); end
+      @result = begin; block_statement(statements); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2578,7 +2578,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS {self.variable_declaration("var", [decl] + decls, true)}
+  # VariableStatement = VarTok - VariableDeclaration:decl (- "," - VariableDeclaration)*:decls EOS {variable_declaration("var", [decl] + decls, true)}
   def _VariableStatement
 
     _save = self.pos
@@ -2641,7 +2641,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.variable_declaration("var", [decl] + decls, true); end
+      @result = begin; variable_declaration("var", [decl] + decls, true); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2653,7 +2653,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # VariableDeclaration = Identifier:id (- "=" !"=" - AssignmentExpression:expr)? {self.variable_declarator(id, expr)}
+  # VariableDeclaration = Identifier:id (- "=" !"=" - AssignmentExpression:expr)? {variable_declarator(id, expr)}
   def _VariableDeclaration
 
     _save = self.pos
@@ -2707,7 +2707,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.variable_declarator(id, expr); end
+      @result = begin; variable_declarator(id, expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2719,7 +2719,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # VariableDeclarationNoIn = Identifier:id (- "=" !"=" - AssignmentExpressionNoIn:expr)? {self.variable_declarator(id, expr)}
+  # VariableDeclarationNoIn = Identifier:id (- "=" !"=" - AssignmentExpressionNoIn:expr)? {variable_declarator(id, expr)}
   def _VariableDeclarationNoIn
 
     _save = self.pos
@@ -2773,7 +2773,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.variable_declarator(id, expr); end
+      @result = begin; variable_declarator(id, expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2845,7 +2845,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # EmptyStatement = ";" {self.empty_statement()}
+  # EmptyStatement = ";" {empty_statement()}
   def _EmptyStatement
 
     _save = self.pos
@@ -2855,7 +2855,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.empty_statement(); end
+      @result = begin; empty_statement(); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2867,7 +2867,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ExpressionStatement = !("{" | FunctionTok) Expression:e EOS {self.expression_statement(e)}
+  # ExpressionStatement = !("{" | FunctionTok) Expression:e EOS {expression_statement(e)}
   def _ExpressionStatement
 
     _save = self.pos
@@ -2902,7 +2902,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.expression_statement(e); end
+      @result = begin; expression_statement(e); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2914,7 +2914,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # IfStatement = IfTok - "(" - Expression:expr - ")" - Statement:stmt1 (- ElseTok - Statement:stmt2)? {self.if_statement(expr, stmt1, stmt2)}
+  # IfStatement = IfTok - "(" - Expression:expr - ")" - Statement:stmt1 (- ElseTok - Statement:stmt2)? {if_statement(expr, stmt1, stmt2)}
   def _IfStatement
 
     _save = self.pos
@@ -3001,7 +3001,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.if_statement(expr, stmt1, stmt2); end
+      @result = begin; if_statement(expr, stmt1, stmt2); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3037,7 +3037,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DoWhileStatement = DoTok - Statement:stmt - WhileTok - "(" - Expression:expr - ")" EOS {self.do_while_statement(stmt, expr)}
+  # DoWhileStatement = DoTok - Statement:stmt - WhileTok - "(" - Expression:expr - ")" EOS {do_while_statement(stmt, expr)}
   def _DoWhileStatement
 
     _save = self.pos
@@ -3104,7 +3104,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.do_while_statement(stmt, expr); end
+      @result = begin; do_while_statement(stmt, expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3116,7 +3116,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # WhileStatement = WhileTok - "(" - Expression:expr - ")" - Statement:stmt {self.while_statement(expr, stmt)}
+  # WhileStatement = WhileTok - "(" - Expression:expr - ")" - Statement:stmt {while_statement(expr, stmt)}
   def _WhileStatement
 
     _save = self.pos
@@ -3168,7 +3168,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.while_statement(expr, stmt); end
+      @result = begin; while_statement(expr, stmt); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3180,7 +3180,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ForInStatement = ForTok - "(" (ForInLeft | ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt {self.for_in_statement(left, right, stmt, nil)}
+  # ForInStatement = ForTok - "(" (ForInLeft | ForInVarLeft):left InTok - Expression:right - ")" - Statement:stmt {for_in_statement(left, right, stmt, nil)}
   def _ForInStatement
 
     _save = self.pos
@@ -3254,7 +3254,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.for_in_statement(left, right, stmt, nil); end
+      @result = begin; for_in_statement(left, right, stmt, nil); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3299,7 +3299,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ForInVarLeft = - VarTok - VariableDeclarationNoIn:decl - {self.variable_declaration("var", [decl], false)}
+  # ForInVarLeft = - VarTok - VariableDeclarationNoIn:decl - {variable_declaration("var", [decl], false)}
   def _ForInVarLeft
 
     _save = self.pos
@@ -3330,7 +3330,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.variable_declaration("var", [decl], false); end
+      @result = begin; variable_declaration("var", [decl], false); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3342,7 +3342,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ForStatement = ForTok - "(" - (ForVarInit | ForInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement:body {self.for_statement(init, test, update, body)}
+  # ForStatement = ForTok - "(" - (ForVarInit | ForInit)?:init - ";" - ForTest?:test - ";" - ForUpdate?:update - ")" - Statement:body {for_statement(init, test, update, body)}
   def _ForStatement
 
     _save = self.pos
@@ -3465,7 +3465,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.for_statement(init, test, update, body); end
+      @result = begin; for_statement(init, test, update, body); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3484,7 +3484,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ForVarInit = VarTok - VariableDeclarationListNoIn:list {self.variable_declaration("var", list, false)}
+  # ForVarInit = VarTok - VariableDeclarationListNoIn:list {variable_declaration("var", list, false)}
   def _ForVarInit
 
     _save = self.pos
@@ -3505,7 +3505,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.variable_declaration("var", list, false); end
+      @result = begin; variable_declaration("var", list, false); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3531,7 +3531,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ContinueStatement = (ContinueTok SnoLB? Identifier:id EOS {self.continue_statement(id)} | ContinueTok SnoLB? EOSnoLB {self.continue_statement(nil)})
+  # ContinueStatement = (ContinueTok SnoLB? Identifier:id EOS {continue_statement(id)} | ContinueTok SnoLB? EOSnoLB {continue_statement(nil)})
   def _ContinueStatement
 
     _save = self.pos
@@ -3565,7 +3565,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.continue_statement(id); end
+        @result = begin; continue_statement(id); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -3598,7 +3598,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.continue_statement(nil); end
+        @result = begin; continue_statement(nil); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -3615,7 +3615,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BreakStatement = (BreakTok SnoLB? Identifier:id ROS {self.break_statement(id)} | BreakTok SnoLB? EOSnoLB {self.break_statement(nil)})
+  # BreakStatement = (BreakTok SnoLB? Identifier:id ROS {break_statement(id)} | BreakTok SnoLB? EOSnoLB {break_statement(nil)})
   def _BreakStatement
 
     _save = self.pos
@@ -3649,7 +3649,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.break_statement(id); end
+        @result = begin; break_statement(id); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -3682,7 +3682,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.break_statement(nil); end
+        @result = begin; break_statement(nil); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -3699,7 +3699,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ReturnStatement = ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) {self.return_statement(expr)}
+  # ReturnStatement = ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) {return_statement(expr)}
   def _ReturnStatement
 
     _save = self.pos
@@ -3750,7 +3750,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.return_statement(expr); end
+      @result = begin; return_statement(expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3762,7 +3762,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # WithStatement = WithTok - "(" - Expression:expr - ")" - Statement:statement {self.with_statement(expr, statement)}
+  # WithStatement = WithTok - "(" - Expression:expr - ")" - Statement:statement {with_statement(expr, statement)}
   def _WithStatement
 
     _save = self.pos
@@ -3814,7 +3814,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.with_statement(expr, statement); end
+      @result = begin; with_statement(expr, statement); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3826,7 +3826,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # LabeledStatement = Identifier:id - ":" - Statement:statement {self.labeled_statement(id, statement)}
+  # LabeledStatement = Identifier:id - ":" - Statement:statement {labeled_statement(id, statement)}
   def _LabeledStatement
 
     _save = self.pos
@@ -3858,7 +3858,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.labeled_statement(id, statement); end
+      @result = begin; labeled_statement(id, statement); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -3870,7 +3870,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # SwitchStatement = SwitchTok - "(" - Expression:expr - ")" - "{" - CaseClauses:clauses - "}" {self.switch_statement(expr, clauses)}
+  # SwitchStatement = SwitchTok - "(" - Expression:expr - ")" - "{" - CaseClauses:clauses - "}" {switch_statement(expr, clauses)}
   def _SwitchStatement
 
     _save = self.pos
@@ -3942,7 +3942,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.switch_statement(expr, clauses); end
+      @result = begin; switch_statement(expr, clauses); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4084,7 +4084,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # CaseClause = - CaseTok - Expression:expr - ":" (- Statement)*:statements {self.switch_case(expr, statements)}
+  # CaseClause = - CaseTok - Expression:expr - ":" (- Statement)*:statements {switch_case(expr, statements)}
   def _CaseClause
 
     _save = self.pos
@@ -4147,7 +4147,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.switch_case(expr, statements); end
+      @result = begin; switch_case(expr, statements); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4159,7 +4159,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DefaultClause = - DefaultTok:tok - ":" (- Statement)*:statements {self.switch_case(nil, statements)}
+  # DefaultClause = - DefaultTok:tok - ":" (- Statement)*:statements {switch_case(nil, statements)}
   def _DefaultClause
 
     _save = self.pos
@@ -4212,7 +4212,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.switch_case(nil, statements); end
+      @result = begin; switch_case(nil, statements); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4224,7 +4224,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ThrowStatement = ThrowTok SnoLB? (EOSnoLB | Expression:expr EOS) {self.throw_statement(expr)}
+  # ThrowStatement = ThrowTok SnoLB? (EOSnoLB | Expression:expr EOS) {throw_statement(expr)}
   def _ThrowStatement
 
     _save = self.pos
@@ -4275,7 +4275,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.throw_statement(expr); end
+      @result = begin; throw_statement(expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4287,7 +4287,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # TryStatement = (TryTok - Block:try - Catch:catch - Finally?:finally {self.try_statement(try, catch, finally)} | TryTok - Block:try - Finally:finally {self.try_statement(try, nil, finally)})
+  # TryStatement = (TryTok - Block:try - Catch:catch - Finally?:finally {try_statement(try, catch, finally)} | TryTok - Block:try - Finally:finally {try_statement(try, nil, finally)})
   def _TryStatement
 
     _save = self.pos
@@ -4339,7 +4339,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.try_statement(try, catch, finally); end
+        @result = begin; try_statement(try, catch, finally); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -4379,7 +4379,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.try_statement(try, nil, finally); end
+        @result = begin; try_statement(try, nil, finally); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -4396,7 +4396,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Catch = CatchTok - "(" - Identifier:id - ")" - Block:block {self.catch_clause(id, block)}
+  # Catch = CatchTok - "(" - Identifier:id - ")" - Block:block {catch_clause(id, block)}
   def _Catch
 
     _save = self.pos
@@ -4448,7 +4448,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.catch_clause(id, block); end
+      @result = begin; catch_clause(id, block); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4493,7 +4493,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DebuggerStatement = DebuggerTok - EOS {self.debugger_statement()}
+  # DebuggerStatement = DebuggerTok - EOS {debugger_statement()}
   def _DebuggerStatement
 
     _save = self.pos
@@ -4513,7 +4513,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.debugger_statement(); end
+      @result = begin; debugger_statement(); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4525,7 +4525,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Expression = AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs {self.sequence_expression([expr] + exprs)}
+  # Expression = AssignmentExpression:expr (- "," - AssignmentExpression)*:exprs {sequence_expression([expr] + exprs)}
   def _Expression
 
     _save = self.pos
@@ -4573,7 +4573,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.sequence_expression([expr] + exprs); end
+      @result = begin; sequence_expression([expr] + exprs); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4585,7 +4585,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ExpressionNoIn = AssignmentExpressionNoIn:expr (- "," - AssignmentExpressionNoIn)*:exprs {self.sequence_expression([expr] + exprs)}
+  # ExpressionNoIn = AssignmentExpressionNoIn:expr (- "," - AssignmentExpressionNoIn)*:exprs {sequence_expression([expr] + exprs)}
   def _ExpressionNoIn
 
     _save = self.pos
@@ -4633,7 +4633,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.sequence_expression([expr] + exprs); end
+      @result = begin; sequence_expression([expr] + exprs); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -4645,7 +4645,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # AssignmentExpression = (LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right {self.assignment_expression(op, left, right)} | ConditionalExpression)
+  # AssignmentExpression = (LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right {assignment_expression(op, left, right)} | ConditionalExpression)
   def _AssignmentExpression
 
     _save = self.pos
@@ -4681,7 +4681,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.assignment_expression(op, left, right); end
+        @result = begin; assignment_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -4701,7 +4701,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # AssignmentExpressionNoIn = (LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpressionNoIn:right {self.assignment_expression(op, left, right)} | ConditionalExpressionNoIn)
+  # AssignmentExpressionNoIn = (LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpressionNoIn:right {assignment_expression(op, left, right)} | ConditionalExpressionNoIn)
   def _AssignmentExpressionNoIn
 
     _save = self.pos
@@ -4737,7 +4737,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.assignment_expression(op, left, right); end
+        @result = begin; assignment_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -4841,7 +4841,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ConditionalExpression = (LogicalOrExpression:left - "?" - AssignmentExpression:middle - ":" - AssignmentExpression:right {self.conditional_expression(left, middle, right)} | LogicalOrExpression)
+  # ConditionalExpression = (LogicalOrExpression:left - "?" - AssignmentExpression:middle - ":" - AssignmentExpression:right {conditional_expression(left, middle, right)} | LogicalOrExpression)
   def _ConditionalExpression
 
     _save = self.pos
@@ -4897,7 +4897,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.conditional_expression(left, middle, right); end
+        @result = begin; conditional_expression(left, middle, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -4917,7 +4917,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ConditionalExpressionNoIn = (LogicalOrExpressionNoIn:left - "?" - AssignmentExpressionNoIn:middle - ":" - AssignmentExpressionNoIn:right {self.conditional_expression(left, middle, right)} | LogicalOrExpressionNoIn)
+  # ConditionalExpressionNoIn = (LogicalOrExpressionNoIn:left - "?" - AssignmentExpressionNoIn:middle - ":" - AssignmentExpressionNoIn:right {conditional_expression(left, middle, right)} | LogicalOrExpressionNoIn)
   def _ConditionalExpressionNoIn
 
     _save = self.pos
@@ -4973,7 +4973,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.conditional_expression(left, middle, right); end
+        @result = begin; conditional_expression(left, middle, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -4993,7 +4993,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # LogicalOrExpression = (LogicalOrExpression:left - "||" - LogicalAndExpression:right {self.logical_expression('||', left, right)} | LogicalAndExpression)
+  # LogicalOrExpression = (LogicalOrExpression:left - "||" - LogicalAndExpression:right {logical_expression('||', left, right)} | LogicalAndExpression)
   def _LogicalOrExpression
 
     _save = self.pos
@@ -5028,7 +5028,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.logical_expression('||', left, right); end
+        @result = begin; logical_expression('||', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5048,7 +5048,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # LogicalOrExpressionNoIn = (LogicalAndExpressionNoIn:left - "||" - LogicalAndExpressionNoIn:right {self.logical_expression('||', left, right)} | LogicalAndExpressionNoIn)
+  # LogicalOrExpressionNoIn = (LogicalAndExpressionNoIn:left - "||" - LogicalAndExpressionNoIn:right {logical_expression('||', left, right)} | LogicalAndExpressionNoIn)
   def _LogicalOrExpressionNoIn
 
     _save = self.pos
@@ -5083,7 +5083,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.logical_expression('||', left, right); end
+        @result = begin; logical_expression('||', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5103,7 +5103,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # LogicalAndExpression = (LogicalAndExpression:left - "&&" - BitwiseOrExpression:right {self.logical_expression('&&', left, right)} | BitwiseOrExpression)
+  # LogicalAndExpression = (LogicalAndExpression:left - "&&" - BitwiseOrExpression:right {logical_expression('&&', left, right)} | BitwiseOrExpression)
   def _LogicalAndExpression
 
     _save = self.pos
@@ -5138,7 +5138,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.logical_expression('&&', left, right); end
+        @result = begin; logical_expression('&&', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5158,7 +5158,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # LogicalAndExpressionNoIn = (LogicalAndExpression:left - "&&" - BitwiseOrExpressionNoIn:right {self.logical_expression('&&', left, right)} | BitwiseOrExpressionNoIn)
+  # LogicalAndExpressionNoIn = (LogicalAndExpression:left - "&&" - BitwiseOrExpressionNoIn:right {logical_expression('&&', left, right)} | BitwiseOrExpressionNoIn)
   def _LogicalAndExpressionNoIn
 
     _save = self.pos
@@ -5193,7 +5193,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.logical_expression('&&', left, right); end
+        @result = begin; logical_expression('&&', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5213,7 +5213,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseOrExpression = (BitwiseOrExpression:left - "|" !"=" - BitwiseXOrExpression:right {self.binary_expression('|', left, right)} | BitwiseXOrExpression)
+  # BitwiseOrExpression = (BitwiseOrExpression:left - "|" !"=" - BitwiseXOrExpression:right {binary_expression('|', left, right)} | BitwiseXOrExpression)
   def _BitwiseOrExpression
 
     _save = self.pos
@@ -5256,7 +5256,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('|', left, right); end
+        @result = begin; binary_expression('|', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5276,7 +5276,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseOrExpressionNoIn = (BitwiseOrExpressionNoIn:left - "|" !"=" - BitwiseXOrExpressionNoIn:right {self.binary_expression('|', left, right)} | BitwiseXOrExpressionNoIn)
+  # BitwiseOrExpressionNoIn = (BitwiseOrExpressionNoIn:left - "|" !"=" - BitwiseXOrExpressionNoIn:right {binary_expression('|', left, right)} | BitwiseXOrExpressionNoIn)
   def _BitwiseOrExpressionNoIn
 
     _save = self.pos
@@ -5319,7 +5319,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('|', left, right); end
+        @result = begin; binary_expression('|', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5339,7 +5339,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseXOrExpression = (BitwiseXOrExpression:left - "^" !"=" - BitwiseAndExpression:right {self.binary_expression('^', left, right)} | BitwiseAndExpression)
+  # BitwiseXOrExpression = (BitwiseXOrExpression:left - "^" !"=" - BitwiseAndExpression:right {binary_expression('^', left, right)} | BitwiseAndExpression)
   def _BitwiseXOrExpression
 
     _save = self.pos
@@ -5382,7 +5382,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('^', left, right); end
+        @result = begin; binary_expression('^', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5402,7 +5402,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseXOrExpressionNoIn = (BitwiseXOrExpressionNoIn:left - "^" !"=" - BitwiseAndExpressionNoIn:right {self.binary_expression('^', left, right)} | BitwiseAndExpressionNoIn)
+  # BitwiseXOrExpressionNoIn = (BitwiseXOrExpressionNoIn:left - "^" !"=" - BitwiseAndExpressionNoIn:right {binary_expression('^', left, right)} | BitwiseAndExpressionNoIn)
   def _BitwiseXOrExpressionNoIn
 
     _save = self.pos
@@ -5445,7 +5445,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('^', left, right); end
+        @result = begin; binary_expression('^', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5465,7 +5465,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseAndExpression = (BitwiseAndExpression:left - "&" !"=" - EqualityExpression:right {self.binary_expression('&', left, right)} | EqualityExpression)
+  # BitwiseAndExpression = (BitwiseAndExpression:left - "&" !"=" - EqualityExpression:right {binary_expression('&', left, right)} | EqualityExpression)
   def _BitwiseAndExpression
 
     _save = self.pos
@@ -5508,7 +5508,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('&', left, right); end
+        @result = begin; binary_expression('&', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5528,7 +5528,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BitwiseAndExpressionNoIn = (BitwiseAndExpressionNoIn:left - "&" !"=" - EqualityExpressionNoIn:right {self.binary_expression('&', left, right)} | EqualityExpressionNoIn)
+  # BitwiseAndExpressionNoIn = (BitwiseAndExpressionNoIn:left - "&" !"=" - EqualityExpressionNoIn:right {binary_expression('&', left, right)} | EqualityExpressionNoIn)
   def _BitwiseAndExpressionNoIn
 
     _save = self.pos
@@ -5571,7 +5571,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression('&', left, right); end
+        @result = begin; binary_expression('&', left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5591,7 +5591,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # EqualityExpression = (EqualityExpression:left - EqualityOp:op - RelationalExpression:right {self.binary_expression(op, left, right)} | RelationalExpression)
+  # EqualityExpression = (EqualityExpression:left - EqualityOp:op - RelationalExpression:right {binary_expression(op, left, right)} | RelationalExpression)
   def _EqualityExpression
 
     _save = self.pos
@@ -5627,7 +5627,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5647,7 +5647,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # EqualityExpressionNoIn = (EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right {self.binary_expression(op, left, right)} | RelationalExpressionNoIn)
+  # EqualityExpressionNoIn = (EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right {binary_expression(op, left, right)} | RelationalExpressionNoIn)
   def _EqualityExpressionNoIn
 
     _save = self.pos
@@ -5683,7 +5683,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5746,7 +5746,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # RelationalExpression = (RelationalExpression:left - RelationalOp:op - ShiftExpression:right {self.binary_expression(op, left, right)} | ShiftExpression:expr)
+  # RelationalExpression = (RelationalExpression:left - RelationalOp:op - ShiftExpression:right {binary_expression(op, left, right)} | ShiftExpression:expr)
   def _RelationalExpression
 
     _save = self.pos
@@ -5782,7 +5782,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5803,7 +5803,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # RelationalExpressionNoIn = (RelationalExpressionNoIn:left - RelationalOpNoIn - ShiftExpression:right {self.binary_expression(op, left, right)} | ShiftExpression)
+  # RelationalExpressionNoIn = (RelationalExpressionNoIn:left - RelationalOpNoIn - ShiftExpression:right {binary_expression(op, left, right)} | ShiftExpression)
   def _RelationalExpressionNoIn
 
     _save = self.pos
@@ -5838,7 +5838,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -5953,7 +5953,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ShiftExpression = (ShiftExpression:left - ShiftOp:op - AdditiveExpression:right {self.binary_expression(op, left, right)} | AdditiveExpression)
+  # ShiftExpression = (ShiftExpression:left - ShiftOp:op - AdditiveExpression:right {binary_expression(op, left, right)} | AdditiveExpression)
   def _ShiftExpression
 
     _save = self.pos
@@ -5989,7 +5989,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6049,7 +6049,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # AdditiveExpression = (AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right {self.binary_expression(op, left, right)} | MultiplicativeExpression)
+  # AdditiveExpression = (AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right {binary_expression(op, left, right)} | MultiplicativeExpression)
   def _AdditiveExpression
 
     _save = self.pos
@@ -6085,7 +6085,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6199,7 +6199,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # MultiplicativeExpression = (MultiplicativeExpression:left - MultiplicativeOp:op - UnaryExpression:right {self.binary_expression(op, left, right)} | UnaryExpression)
+  # MultiplicativeExpression = (MultiplicativeExpression:left - MultiplicativeOp:op - UnaryExpression:right {binary_expression(op, left, right)} | UnaryExpression)
   def _MultiplicativeExpression
 
     _save = self.pos
@@ -6235,7 +6235,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.binary_expression(op, left, right); end
+        @result = begin; binary_expression(op, left, right); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6321,7 +6321,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # SimpleUnaryExpression = UnaryOp:op - UnaryExpression:expr {self.unary_expression(op, expr)}
+  # SimpleUnaryExpression = UnaryOp:op - UnaryExpression:expr {unary_expression(op, expr)}
   def _SimpleUnaryExpression
 
     _save = self.pos
@@ -6343,7 +6343,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.unary_expression(op, expr); end
+      @result = begin; unary_expression(op, expr); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -6413,7 +6413,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # PostfixExpression = (LeftHandSideExpression:argument SnoLB? PostfixOp:op {self.update_expression(op, argument, false)} | LeftHandSideExpression)
+  # PostfixExpression = (LeftHandSideExpression:argument SnoLB? PostfixOp:op {update_expression(op, argument, false)} | LeftHandSideExpression)
   def _PostfixExpression
 
     _save = self.pos
@@ -6443,7 +6443,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.update_expression(op, argument, false); end
+        @result = begin; update_expression(op, argument, false); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6518,7 +6518,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # CallExpression = (CallExpression:call - BracketAccessor:expr {self.member_expression(call, expr, true)} | CallExpression:call - DotAccessor:expr {self.member_expression(call, expr, false)} | CallExpression:expr - Arguments:arguments {self.call_expression(expr, arguments)} | MemberExpression:expr - Arguments:arguments {self.call_expression(expr, arguments)})
+  # CallExpression = (CallExpression:call - BracketAccessor:expr {member_expression(call, expr, true)} | CallExpression:call - DotAccessor:expr {member_expression(call, expr, false)} | CallExpression:expr - Arguments:arguments {call_expression(expr, arguments)} | MemberExpression:expr - Arguments:arguments {call_expression(expr, arguments)})
   def _CallExpression
 
     _save = self.pos
@@ -6543,7 +6543,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.member_expression(call, expr, true); end
+        @result = begin; member_expression(call, expr, true); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6573,7 +6573,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save2
           break
         end
-        @result = begin; self.member_expression(call, expr, false); end
+        @result = begin; member_expression(call, expr, false); end
         _tmp = true
         unless _tmp
           self.pos = _save2
@@ -6603,7 +6603,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.call_expression(expr, arguments); end
+        @result = begin; call_expression(expr, arguments); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -6633,7 +6633,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save4
           break
         end
-        @result = begin; self.call_expression(expr, arguments); end
+        @result = begin; call_expression(expr, arguments); end
         _tmp = true
         unless _tmp
           self.pos = _save4
@@ -6693,7 +6693,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DotAccessor = "." - IdentifierName:id {self.identifier(id)}
+  # DotAccessor = "." - IdentifierName:id {identifier(id)}
   def _DotAccessor
 
     _save = self.pos
@@ -6714,7 +6714,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.identifier(id); end
+      @result = begin; identifier(id); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -6835,7 +6835,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # NewExpression = (MemberExpression | NewTok - NewExpression:expr {self.new_expression(expr, nil)})
+  # NewExpression = (MemberExpression | NewTok - NewExpression:expr {new_expression(expr, nil)})
   def _NewExpression
 
     _save = self.pos
@@ -6862,7 +6862,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.new_expression(expr, nil); end
+        @result = begin; new_expression(expr, nil); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6879,7 +6879,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # MemberExpression = (MemberExpression:left - BracketAccessor:right {self.member_expression(left, right, true)} | MemberExpression:left - DotAccessor:right {self.member_expression(left, right, false)} | NewTok - MemberExpression:expr - Arguments:arguments {self.new_expression(expr, arguments)} | PrimaryExpression | FunctionExpression)
+  # MemberExpression = (MemberExpression:left - BracketAccessor:right {member_expression(left, right, true)} | MemberExpression:left - DotAccessor:right {member_expression(left, right, false)} | NewTok - MemberExpression:expr - Arguments:arguments {new_expression(expr, arguments)} | PrimaryExpression | FunctionExpression)
   def _MemberExpression
 
     _save = self.pos
@@ -6904,7 +6904,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.member_expression(left, right, true); end
+        @result = begin; member_expression(left, right, true); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -6934,7 +6934,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save2
           break
         end
-        @result = begin; self.member_expression(left, right, false); end
+        @result = begin; member_expression(left, right, false); end
         _tmp = true
         unless _tmp
           self.pos = _save2
@@ -6974,7 +6974,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.new_expression(expr, arguments); end
+        @result = begin; new_expression(expr, arguments); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -6997,7 +6997,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # PrimaryExpression = (ThisTok {self.this_expression()} | Identifier | Literal | ArrayLiteral | ObjectLiteral | "(" - Expression:expr - ")" { expr.parens = true; expr })
+  # PrimaryExpression = (ThisTok {this_expression()} | Identifier | Literal | ArrayLiteral | ObjectLiteral | "(" - Expression:expr - ")" { expr.parens = true; expr })
   def _PrimaryExpression
 
     _save = self.pos
@@ -7010,7 +7010,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.this_expression(); end
+        @result = begin; this_expression(); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7078,7 +7078,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ArrayLiteral = ("[" - Elision?:elision - "]" {self.array_expression(elision || [])} | "[" - ElementList:list - "]" {self.array_expression(list)} | "[" - ElementList:list - "," - Elision?:elision - "]" {self.array_expression(list + (elision || []))})
+  # ArrayLiteral = ("[" - Elision?:elision - "]" {array_expression(elision || [])} | "[" - ElementList:list - "]" {array_expression(list)} | "[" - ElementList:list - "," - Elision?:elision - "]" {array_expression(list + (elision || []))})
   def _ArrayLiteral
 
     _save = self.pos
@@ -7118,7 +7118,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.array_expression(elision || []); end
+        @result = begin; array_expression(elision || []); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7157,7 +7157,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.array_expression(list); end
+        @result = begin; array_expression(list); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -7223,7 +7223,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save4
           break
         end
-        @result = begin; self.array_expression(list + (elision || [])); end
+        @result = begin; array_expression(list + (elision || [])); end
         _tmp = true
         unless _tmp
           self.pos = _save4
@@ -7404,7 +7404,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # ObjectLiteral = "{" SnoComment* PropertyNameAndValueList?:list - ","? - "}" {self.object_expression(list || [])}
+  # ObjectLiteral = "{" SnoComment* PropertyNameAndValueList?:list - ","? - "}" {object_expression(list || [])}
   def _ObjectLiteral
 
     _save = self.pos
@@ -7460,7 +7460,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.object_expression(list || []); end
+      @result = begin; object_expression(list || []); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -7536,7 +7536,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # PropertyAssignment = (-:comments PropertyName:key - ":" - AssignmentExpression:value {self.property(key, value, 'init', comments)} | PropertyGetter | PropertySetter)
+  # PropertyAssignment = (-:comments PropertyName:key - ":" - AssignmentExpression:value {property(key, value, 'init', comments)} | PropertyGetter | PropertySetter)
   def _PropertyAssignment
 
     _save = self.pos
@@ -7577,7 +7577,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.property(key, value, 'init', comments); end
+        @result = begin; property(key, value, 'init', comments); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7762,7 +7762,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # PropertyName = (IdentifierName:name {self.identifier(name)} | StringLiteral | NumericLiteral)
+  # PropertyName = (IdentifierName:name {identifier(name)} | StringLiteral | NumericLiteral)
   def _PropertyName
 
     _save = self.pos
@@ -7776,7 +7776,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.identifier(name); end
+        @result = begin; identifier(name); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7806,7 +7806,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # Literal = (NullLiteral {self.literal(nil)} | BooleanLiteral | NumericLiteral:number {self.literal(number)} | StringLiteral:string {self.literal(string)} | RegularExpressionLiteral:regex {self.literal(regex)})
+  # Literal = (NullLiteral {literal(nil)} | BooleanLiteral | NumericLiteral:number {literal(number)} | StringLiteral:string {literal(string)} | RegularExpressionLiteral:regex {literal(regex)})
   def _Literal
 
     _save = self.pos
@@ -7819,7 +7819,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.literal(nil); end
+        @result = begin; literal(nil); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7841,7 +7841,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save2
           break
         end
-        @result = begin; self.literal(number); end
+        @result = begin; literal(number); end
         _tmp = true
         unless _tmp
           self.pos = _save2
@@ -7860,7 +7860,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.literal(string); end
+        @result = begin; literal(string); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -7879,7 +7879,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save4
           break
         end
-        @result = begin; self.literal(regex); end
+        @result = begin; literal(regex); end
         _tmp = true
         unless _tmp
           self.pos = _save4
@@ -7903,7 +7903,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # BooleanLiteral = (TrueTok {self.literal(true)} | FalseTok {self.literal(false)})
+  # BooleanLiteral = (TrueTok {literal(true)} | FalseTok {literal(false)})
   def _BooleanLiteral
 
     _save = self.pos
@@ -7916,7 +7916,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.literal(true); end
+        @result = begin; literal(true); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -7934,7 +7934,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save2
           break
         end
-        @result = begin; self.literal(false); end
+        @result = begin; literal(false); end
         _tmp = true
         unless _tmp
           self.pos = _save2
@@ -7998,7 +7998,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DecimalLiteral = (< DecimalIntegerLiteral "." DecimalDigit* ExponentPart? > {self.number(text)} | < "." DecimalDigit+ ExponentPart? > {self.number(text)} | < DecimalIntegerLiteral ExponentPart? > {self.number(text)})
+  # DecimalLiteral = (< DecimalIntegerLiteral "." DecimalDigit* ExponentPart? > {number(text)} | < "." DecimalDigit+ ExponentPart? > {number(text)} | < DecimalIntegerLiteral ExponentPart? > {number(text)})
   def _DecimalLiteral
 
     _save = self.pos
@@ -8048,7 +8048,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.number(text); end
+        @result = begin; number(text); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -8104,7 +8104,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save5
           break
         end
-        @result = begin; self.number(text); end
+        @result = begin; number(text); end
         _tmp = true
         unless _tmp
           self.pos = _save5
@@ -8145,7 +8145,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save9
           break
         end
-        @result = begin; self.number(text); end
+        @result = begin; number(text); end
         _tmp = true
         unless _tmp
           self.pos = _save9
@@ -8162,7 +8162,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # DecimalIntegerLiteral = < ("0" | /[1-9]/ DecimalDigit*) > {self.number(text)}
+  # DecimalIntegerLiteral = < ("0" | /[1-9]/ DecimalDigit*) > {number(text)}
   def _DecimalIntegerLiteral
 
     _save = self.pos
@@ -8205,7 +8205,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.number(text); end
+      @result = begin; number(text); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -8217,7 +8217,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # HexIntegerLiteral = (< "0x" HexDigit+ > {self.number(text)} | < "0X" HexDigit+ > {self.number(text)})
+  # HexIntegerLiteral = (< "0x" HexDigit+ > {number(text)} | < "0X" HexDigit+ > {number(text)})
   def _HexIntegerLiteral
 
     _save = self.pos
@@ -8258,7 +8258,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.number(text); end
+        @result = begin; number(text); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -8304,7 +8304,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save4
           break
         end
-        @result = begin; self.number(text); end
+        @result = begin; number(text); end
         _tmp = true
         unless _tmp
           self.pos = _save4
@@ -8442,7 +8442,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # StringLiteral = (DQ < DoubleStringCharacter* > DQ {self.string_literal(text, '"')} | SQ < SingleStringCharacter* > SQ {self.string_literal(text, "'")})
+  # StringLiteral = (DQ < DoubleStringCharacter* > DQ {string_literal(text, '"')} | SQ < SingleStringCharacter* > SQ {string_literal(text, "'")})
   def _StringLiteral
 
     _save = self.pos
@@ -8473,7 +8473,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save1
           break
         end
-        @result = begin; self.string_literal(text, '"'); end
+        @result = begin; string_literal(text, '"'); end
         _tmp = true
         unless _tmp
           self.pos = _save1
@@ -8509,7 +8509,7 @@ class LatteScript::Parser < KPeg::CompiledParser
           self.pos = _save3
           break
         end
-        @result = begin; self.string_literal(text, "'"); end
+        @result = begin; string_literal(text, "'"); end
         _tmp = true
         unless _tmp
           self.pos = _save3
@@ -8931,7 +8931,7 @@ class LatteScript::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # RegularExpressionLiteral = "/" RegularExpressionBody:body "/" RegularExpressionFlags:flags {self.regexp(body, flags)}
+  # RegularExpressionLiteral = "/" RegularExpressionBody:body "/" RegularExpressionFlags:flags {regexp(body, flags)}
   def _RegularExpressionLiteral
 
     _save = self.pos
@@ -8958,7 +8958,7 @@ class LatteScript::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; self.regexp(body, flags); end
+      @result = begin; regexp(body, flags); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -9276,9 +9276,9 @@ class LatteScript::Parser < KPeg::CompiledParser
   Rules[:_LineTerminator] = rule_info("LineTerminator", "/[\\n\\r]+/")
   Rules[:_LineTerminatorSequence] = rule_info("LineTerminatorSequence", "< /\\n|\\r\\n|\\r/ > { text }")
   Rules[:_Comment] = rule_info("Comment", "(MultiLineComment | SingleLineComment)")
-  Rules[:_MultiLineCommentNoLB] = rule_info("MultiLineCommentNoLB", "\"/*\" < (!\"*/\" SourceCharacter)* > \"*/\" {self.comment(text, 'multiline', nil)}")
-  Rules[:_MultiLineComment] = rule_info("MultiLineComment", "(\"/*\" < (!\"*/\" SourceCharacter)* > \"*/\" LineTerminatorSequence:lf {self.comment(text, 'multiline', lf)} | MultiLineCommentNoLB)")
-  Rules[:_SingleLineComment] = rule_info("SingleLineComment", "\"//\" < /[^\\n\\r]*/ > {self.comment(text, 'singleline', nil)}")
+  Rules[:_MultiLineCommentNoLB] = rule_info("MultiLineCommentNoLB", "\"/*\" < (!\"*/\" SourceCharacter)* > \"*/\" {comment(text, 'multiline', nil)}")
+  Rules[:_MultiLineComment] = rule_info("MultiLineComment", "(\"/*\" < (!\"*/\" SourceCharacter)* > \"*/\" LineTerminatorSequence:lf {comment(text, 'multiline', lf)} | MultiLineCommentNoLB)")
+  Rules[:_SingleLineComment] = rule_info("SingleLineComment", "\"//\" < /[^\\n\\r]*/ > {comment(text, 'singleline', nil)}")
   Rules[:_SourceCharacter] = rule_info("SourceCharacter", "/[\\x00-\\xff]/n")
   Rules[:_EOS] = rule_info("EOS", "(- \";\" | SnoLB? LineTerminatorSequence | SnoLB? &\"}\" | - EOF)")
   Rules[:_EOSnoLB] = rule_info("EOSnoLB", "(SnoLB? \";\" | SnoLB? LineTerminatorSequence | SnoLB? &\"}\" | SnoLB? EOF)")
@@ -9286,7 +9286,7 @@ class LatteScript::Parser < KPeg::CompiledParser
   Rules[:_ReservedWord] = rule_info("ReservedWord", "(Keyword | FutureReservedWord | \"null\" | \"true\" | \"false\") !IdentifierPart")
   Rules[:_Keyword] = rule_info("Keyword", "/break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|instanceof|in|new|return|switch|this|throw|try|typeof|var|void|while|with/")
   Rules[:_FutureReservedWord] = rule_info("FutureReservedWord", "/abstract|boolean|byte|char|class|const|double|enum|export|extends|final|float|goto|implements|import|interface|int|long|native|package|private|protected|public|short|static|super|synchronized|throws|transient|volatile/")
-  Rules[:_Identifier] = rule_info("Identifier", "!ReservedWord IdentifierName:name {self.identifier(name)}")
+  Rules[:_Identifier] = rule_info("Identifier", "!ReservedWord IdentifierName:name {identifier(name)}")
   Rules[:_IdentifierName] = rule_info("IdentifierName", "< IdentifierStart IdentifierPart* > { text }")
   Rules[:_IdentifierStart] = rule_info("IdentifierStart", "(/[A-Za-z]/ | \"$\" | \"_\")")
   Rules[:_IdentifierPart] = rule_info("IdentifierPart", "(IdentifierStart | /[0-9]/)")
@@ -9321,114 +9321,114 @@ class LatteScript::Parser < KPeg::CompiledParser
   Rules[:_TryTok] = rule_info("TryTok", "\"try\" !IdentifierPart")
   Rules[:_WithTok] = rule_info("WithTok", "\"with\" !IdentifierPart")
   Rules[:_root] = rule_info("root", "Program:p { p }")
-  Rules[:_Program] = rule_info("Program", "CommentedStatement*:s - {self.program(s)}")
+  Rules[:_Program] = rule_info("Program", "CommentedStatement*:s - {program(s)}")
   Rules[:_FunctionBody] = rule_info("FunctionBody", "CommentedStatement*:statements - { statements }")
-  Rules[:_FunctionDeclaration] = rule_info("FunctionDeclaration", "FunctionTok - Identifier:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {self.function_declaration(id, params || [], body)}")
-  Rules[:_FunctionExpression] = rule_info("FunctionExpression", "FunctionTok - Identifier?:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {self.function_expression(id, params || [], body)}")
+  Rules[:_FunctionDeclaration] = rule_info("FunctionDeclaration", "FunctionTok - Identifier:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_declaration(id, params || [], body)}")
+  Rules[:_FunctionExpression] = rule_info("FunctionExpression", "FunctionTok - Identifier?:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_expression(id, params || [], body)}")
   Rules[:_FormalParameterList] = rule_info("FormalParameterList", "Identifier:id (- \",\" - Identifier)*:ids { [id] + ids }")
   Rules[:_UseStrictDirective] = rule_info("UseStrictDirective", "\"use\" S \"strict\" S (\",\" !LineTerminator SourceCharacter)*")
   Rules[:_Statement] = rule_info("Statement", "(IfStatement | ExpressionStatement | VariableStatement | Block | EmptyStatement | IterationStatement | ContinueStatement | BreakStatement | ReturnStatement | WithStatement | LabeledStatement | SwitchStatement | ThrowStatement | TryStatement | DebuggerStatement | FunctionDeclaration)")
-  Rules[:_CommentedStatement] = rule_info("CommentedStatement", "-:comments Statement:s {self.commented_statement(s, comments)}")
-  Rules[:_Block] = rule_info("Block", "\"{\" CommentedStatement*:statements - \"}\" {self.block_statement(statements)}")
-  Rules[:_VariableStatement] = rule_info("VariableStatement", "VarTok - VariableDeclaration:decl (- \",\" - VariableDeclaration)*:decls EOS {self.variable_declaration(\"var\", [decl] + decls, true)}")
-  Rules[:_VariableDeclaration] = rule_info("VariableDeclaration", "Identifier:id (- \"=\" !\"=\" - AssignmentExpression:expr)? {self.variable_declarator(id, expr)}")
-  Rules[:_VariableDeclarationNoIn] = rule_info("VariableDeclarationNoIn", "Identifier:id (- \"=\" !\"=\" - AssignmentExpressionNoIn:expr)? {self.variable_declarator(id, expr)}")
+  Rules[:_CommentedStatement] = rule_info("CommentedStatement", "-:comments Statement:s {commented_statement(s, comments)}")
+  Rules[:_Block] = rule_info("Block", "\"{\" CommentedStatement*:statements - \"}\" {block_statement(statements)}")
+  Rules[:_VariableStatement] = rule_info("VariableStatement", "VarTok - VariableDeclaration:decl (- \",\" - VariableDeclaration)*:decls EOS {variable_declaration(\"var\", [decl] + decls, true)}")
+  Rules[:_VariableDeclaration] = rule_info("VariableDeclaration", "Identifier:id (- \"=\" !\"=\" - AssignmentExpression:expr)? {variable_declarator(id, expr)}")
+  Rules[:_VariableDeclarationNoIn] = rule_info("VariableDeclarationNoIn", "Identifier:id (- \"=\" !\"=\" - AssignmentExpressionNoIn:expr)? {variable_declarator(id, expr)}")
   Rules[:_VariableDeclarationListNoIn] = rule_info("VariableDeclarationListNoIn", "VariableDeclarationNoIn:var (- \",\" - VariableDeclarationNoIn)*:vars { [var] + vars }")
-  Rules[:_EmptyStatement] = rule_info("EmptyStatement", "\";\" {self.empty_statement()}")
-  Rules[:_ExpressionStatement] = rule_info("ExpressionStatement", "!(\"{\" | FunctionTok) Expression:e EOS {self.expression_statement(e)}")
-  Rules[:_IfStatement] = rule_info("IfStatement", "IfTok - \"(\" - Expression:expr - \")\" - Statement:stmt1 (- ElseTok - Statement:stmt2)? {self.if_statement(expr, stmt1, stmt2)}")
+  Rules[:_EmptyStatement] = rule_info("EmptyStatement", "\";\" {empty_statement()}")
+  Rules[:_ExpressionStatement] = rule_info("ExpressionStatement", "!(\"{\" | FunctionTok) Expression:e EOS {expression_statement(e)}")
+  Rules[:_IfStatement] = rule_info("IfStatement", "IfTok - \"(\" - Expression:expr - \")\" - Statement:stmt1 (- ElseTok - Statement:stmt2)? {if_statement(expr, stmt1, stmt2)}")
   Rules[:_IterationStatement] = rule_info("IterationStatement", "(DoWhileStatement | WhileStatement | ForInStatement | ForStatement)")
-  Rules[:_DoWhileStatement] = rule_info("DoWhileStatement", "DoTok - Statement:stmt - WhileTok - \"(\" - Expression:expr - \")\" EOS {self.do_while_statement(stmt, expr)}")
-  Rules[:_WhileStatement] = rule_info("WhileStatement", "WhileTok - \"(\" - Expression:expr - \")\" - Statement:stmt {self.while_statement(expr, stmt)}")
-  Rules[:_ForInStatement] = rule_info("ForInStatement", "ForTok - \"(\" (ForInLeft | ForInVarLeft):left InTok - Expression:right - \")\" - Statement:stmt {self.for_in_statement(left, right, stmt, nil)}")
+  Rules[:_DoWhileStatement] = rule_info("DoWhileStatement", "DoTok - Statement:stmt - WhileTok - \"(\" - Expression:expr - \")\" EOS {do_while_statement(stmt, expr)}")
+  Rules[:_WhileStatement] = rule_info("WhileStatement", "WhileTok - \"(\" - Expression:expr - \")\" - Statement:stmt {while_statement(expr, stmt)}")
+  Rules[:_ForInStatement] = rule_info("ForInStatement", "ForTok - \"(\" (ForInLeft | ForInVarLeft):left InTok - Expression:right - \")\" - Statement:stmt {for_in_statement(left, right, stmt, nil)}")
   Rules[:_ForInLeft] = rule_info("ForInLeft", "- LeftHandSideExpression:expr - { expr }")
-  Rules[:_ForInVarLeft] = rule_info("ForInVarLeft", "- VarTok - VariableDeclarationNoIn:decl - {self.variable_declaration(\"var\", [decl], false)}")
-  Rules[:_ForStatement] = rule_info("ForStatement", "ForTok - \"(\" - (ForVarInit | ForInit)?:init - \";\" - ForTest?:test - \";\" - ForUpdate?:update - \")\" - Statement:body {self.for_statement(init, test, update, body)}")
+  Rules[:_ForInVarLeft] = rule_info("ForInVarLeft", "- VarTok - VariableDeclarationNoIn:decl - {variable_declaration(\"var\", [decl], false)}")
+  Rules[:_ForStatement] = rule_info("ForStatement", "ForTok - \"(\" - (ForVarInit | ForInit)?:init - \";\" - ForTest?:test - \";\" - ForUpdate?:update - \")\" - Statement:body {for_statement(init, test, update, body)}")
   Rules[:_ForInit] = rule_info("ForInit", "ExpressionNoIn")
-  Rules[:_ForVarInit] = rule_info("ForVarInit", "VarTok - VariableDeclarationListNoIn:list {self.variable_declaration(\"var\", list, false)}")
+  Rules[:_ForVarInit] = rule_info("ForVarInit", "VarTok - VariableDeclarationListNoIn:list {variable_declaration(\"var\", list, false)}")
   Rules[:_ForTest] = rule_info("ForTest", "Expression")
   Rules[:_ForUpdate] = rule_info("ForUpdate", "Expression")
-  Rules[:_ContinueStatement] = rule_info("ContinueStatement", "(ContinueTok SnoLB? Identifier:id EOS {self.continue_statement(id)} | ContinueTok SnoLB? EOSnoLB {self.continue_statement(nil)})")
-  Rules[:_BreakStatement] = rule_info("BreakStatement", "(BreakTok SnoLB? Identifier:id ROS {self.break_statement(id)} | BreakTok SnoLB? EOSnoLB {self.break_statement(nil)})")
-  Rules[:_ReturnStatement] = rule_info("ReturnStatement", "ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) {self.return_statement(expr)}")
-  Rules[:_WithStatement] = rule_info("WithStatement", "WithTok - \"(\" - Expression:expr - \")\" - Statement:statement {self.with_statement(expr, statement)}")
-  Rules[:_LabeledStatement] = rule_info("LabeledStatement", "Identifier:id - \":\" - Statement:statement {self.labeled_statement(id, statement)}")
-  Rules[:_SwitchStatement] = rule_info("SwitchStatement", "SwitchTok - \"(\" - Expression:expr - \")\" - \"{\" - CaseClauses:clauses - \"}\" {self.switch_statement(expr, clauses)}")
+  Rules[:_ContinueStatement] = rule_info("ContinueStatement", "(ContinueTok SnoLB? Identifier:id EOS {continue_statement(id)} | ContinueTok SnoLB? EOSnoLB {continue_statement(nil)})")
+  Rules[:_BreakStatement] = rule_info("BreakStatement", "(BreakTok SnoLB? Identifier:id ROS {break_statement(id)} | BreakTok SnoLB? EOSnoLB {break_statement(nil)})")
+  Rules[:_ReturnStatement] = rule_info("ReturnStatement", "ReturnTok SnoLB? (EOSnoLB | Expression:expr EOS) {return_statement(expr)}")
+  Rules[:_WithStatement] = rule_info("WithStatement", "WithTok - \"(\" - Expression:expr - \")\" - Statement:statement {with_statement(expr, statement)}")
+  Rules[:_LabeledStatement] = rule_info("LabeledStatement", "Identifier:id - \":\" - Statement:statement {labeled_statement(id, statement)}")
+  Rules[:_SwitchStatement] = rule_info("SwitchStatement", "SwitchTok - \"(\" - Expression:expr - \")\" - \"{\" - CaseClauses:clauses - \"}\" {switch_statement(expr, clauses)}")
   Rules[:_CaseClauses] = rule_info("CaseClauses", "(CaseClause*:clauses - DefaultClause:default - CaseClause*:more_clauses { clauses + [default] + more_clauses } | CaseClause*:clauses - DefaultClause:default { clauses + [default] } | CaseClause*:clauses { clauses })")
-  Rules[:_CaseClause] = rule_info("CaseClause", "- CaseTok - Expression:expr - \":\" (- Statement)*:statements {self.switch_case(expr, statements)}")
-  Rules[:_DefaultClause] = rule_info("DefaultClause", "- DefaultTok:tok - \":\" (- Statement)*:statements {self.switch_case(nil, statements)}")
-  Rules[:_ThrowStatement] = rule_info("ThrowStatement", "ThrowTok SnoLB? (EOSnoLB | Expression:expr EOS) {self.throw_statement(expr)}")
-  Rules[:_TryStatement] = rule_info("TryStatement", "(TryTok - Block:try - Catch:catch - Finally?:finally {self.try_statement(try, catch, finally)} | TryTok - Block:try - Finally:finally {self.try_statement(try, nil, finally)})")
-  Rules[:_Catch] = rule_info("Catch", "CatchTok - \"(\" - Identifier:id - \")\" - Block:block {self.catch_clause(id, block)}")
+  Rules[:_CaseClause] = rule_info("CaseClause", "- CaseTok - Expression:expr - \":\" (- Statement)*:statements {switch_case(expr, statements)}")
+  Rules[:_DefaultClause] = rule_info("DefaultClause", "- DefaultTok:tok - \":\" (- Statement)*:statements {switch_case(nil, statements)}")
+  Rules[:_ThrowStatement] = rule_info("ThrowStatement", "ThrowTok SnoLB? (EOSnoLB | Expression:expr EOS) {throw_statement(expr)}")
+  Rules[:_TryStatement] = rule_info("TryStatement", "(TryTok - Block:try - Catch:catch - Finally?:finally {try_statement(try, catch, finally)} | TryTok - Block:try - Finally:finally {try_statement(try, nil, finally)})")
+  Rules[:_Catch] = rule_info("Catch", "CatchTok - \"(\" - Identifier:id - \")\" - Block:block {catch_clause(id, block)}")
   Rules[:_Finally] = rule_info("Finally", "FinallyTok - Block:block { block }")
-  Rules[:_DebuggerStatement] = rule_info("DebuggerStatement", "DebuggerTok - EOS {self.debugger_statement()}")
-  Rules[:_Expression] = rule_info("Expression", "AssignmentExpression:expr (- \",\" - AssignmentExpression)*:exprs {self.sequence_expression([expr] + exprs)}")
-  Rules[:_ExpressionNoIn] = rule_info("ExpressionNoIn", "AssignmentExpressionNoIn:expr (- \",\" - AssignmentExpressionNoIn)*:exprs {self.sequence_expression([expr] + exprs)}")
-  Rules[:_AssignmentExpression] = rule_info("AssignmentExpression", "(LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right {self.assignment_expression(op, left, right)} | ConditionalExpression)")
-  Rules[:_AssignmentExpressionNoIn] = rule_info("AssignmentExpressionNoIn", "(LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpressionNoIn:right {self.assignment_expression(op, left, right)} | ConditionalExpressionNoIn)")
+  Rules[:_DebuggerStatement] = rule_info("DebuggerStatement", "DebuggerTok - EOS {debugger_statement()}")
+  Rules[:_Expression] = rule_info("Expression", "AssignmentExpression:expr (- \",\" - AssignmentExpression)*:exprs {sequence_expression([expr] + exprs)}")
+  Rules[:_ExpressionNoIn] = rule_info("ExpressionNoIn", "AssignmentExpressionNoIn:expr (- \",\" - AssignmentExpressionNoIn)*:exprs {sequence_expression([expr] + exprs)}")
+  Rules[:_AssignmentExpression] = rule_info("AssignmentExpression", "(LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpression:right {assignment_expression(op, left, right)} | ConditionalExpression)")
+  Rules[:_AssignmentExpressionNoIn] = rule_info("AssignmentExpressionNoIn", "(LeftHandSideExpression:left - AssignmentOperator:op - AssignmentExpressionNoIn:right {assignment_expression(op, left, right)} | ConditionalExpressionNoIn)")
   Rules[:_AssignmentOperator] = rule_info("AssignmentOperator", "< (\"=\" !\"=\" | \"*=\" | \"|=\" | \"%=\" | \"+=\" | \"-=\" | \"<<=\" | \">>=\" | \">>>=\" | \"&=\" | \"^=\" | \"|=\") > { text }")
-  Rules[:_ConditionalExpression] = rule_info("ConditionalExpression", "(LogicalOrExpression:left - \"?\" - AssignmentExpression:middle - \":\" - AssignmentExpression:right {self.conditional_expression(left, middle, right)} | LogicalOrExpression)")
-  Rules[:_ConditionalExpressionNoIn] = rule_info("ConditionalExpressionNoIn", "(LogicalOrExpressionNoIn:left - \"?\" - AssignmentExpressionNoIn:middle - \":\" - AssignmentExpressionNoIn:right {self.conditional_expression(left, middle, right)} | LogicalOrExpressionNoIn)")
-  Rules[:_LogicalOrExpression] = rule_info("LogicalOrExpression", "(LogicalOrExpression:left - \"||\" - LogicalAndExpression:right {self.logical_expression('||', left, right)} | LogicalAndExpression)")
-  Rules[:_LogicalOrExpressionNoIn] = rule_info("LogicalOrExpressionNoIn", "(LogicalAndExpressionNoIn:left - \"||\" - LogicalAndExpressionNoIn:right {self.logical_expression('||', left, right)} | LogicalAndExpressionNoIn)")
-  Rules[:_LogicalAndExpression] = rule_info("LogicalAndExpression", "(LogicalAndExpression:left - \"&&\" - BitwiseOrExpression:right {self.logical_expression('&&', left, right)} | BitwiseOrExpression)")
-  Rules[:_LogicalAndExpressionNoIn] = rule_info("LogicalAndExpressionNoIn", "(LogicalAndExpression:left - \"&&\" - BitwiseOrExpressionNoIn:right {self.logical_expression('&&', left, right)} | BitwiseOrExpressionNoIn)")
-  Rules[:_BitwiseOrExpression] = rule_info("BitwiseOrExpression", "(BitwiseOrExpression:left - \"|\" !\"=\" - BitwiseXOrExpression:right {self.binary_expression('|', left, right)} | BitwiseXOrExpression)")
-  Rules[:_BitwiseOrExpressionNoIn] = rule_info("BitwiseOrExpressionNoIn", "(BitwiseOrExpressionNoIn:left - \"|\" !\"=\" - BitwiseXOrExpressionNoIn:right {self.binary_expression('|', left, right)} | BitwiseXOrExpressionNoIn)")
-  Rules[:_BitwiseXOrExpression] = rule_info("BitwiseXOrExpression", "(BitwiseXOrExpression:left - \"^\" !\"=\" - BitwiseAndExpression:right {self.binary_expression('^', left, right)} | BitwiseAndExpression)")
-  Rules[:_BitwiseXOrExpressionNoIn] = rule_info("BitwiseXOrExpressionNoIn", "(BitwiseXOrExpressionNoIn:left - \"^\" !\"=\" - BitwiseAndExpressionNoIn:right {self.binary_expression('^', left, right)} | BitwiseAndExpressionNoIn)")
-  Rules[:_BitwiseAndExpression] = rule_info("BitwiseAndExpression", "(BitwiseAndExpression:left - \"&\" !\"=\" - EqualityExpression:right {self.binary_expression('&', left, right)} | EqualityExpression)")
-  Rules[:_BitwiseAndExpressionNoIn] = rule_info("BitwiseAndExpressionNoIn", "(BitwiseAndExpressionNoIn:left - \"&\" !\"=\" - EqualityExpressionNoIn:right {self.binary_expression('&', left, right)} | EqualityExpressionNoIn)")
-  Rules[:_EqualityExpression] = rule_info("EqualityExpression", "(EqualityExpression:left - EqualityOp:op - RelationalExpression:right {self.binary_expression(op, left, right)} | RelationalExpression)")
-  Rules[:_EqualityExpressionNoIn] = rule_info("EqualityExpressionNoIn", "(EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right {self.binary_expression(op, left, right)} | RelationalExpressionNoIn)")
+  Rules[:_ConditionalExpression] = rule_info("ConditionalExpression", "(LogicalOrExpression:left - \"?\" - AssignmentExpression:middle - \":\" - AssignmentExpression:right {conditional_expression(left, middle, right)} | LogicalOrExpression)")
+  Rules[:_ConditionalExpressionNoIn] = rule_info("ConditionalExpressionNoIn", "(LogicalOrExpressionNoIn:left - \"?\" - AssignmentExpressionNoIn:middle - \":\" - AssignmentExpressionNoIn:right {conditional_expression(left, middle, right)} | LogicalOrExpressionNoIn)")
+  Rules[:_LogicalOrExpression] = rule_info("LogicalOrExpression", "(LogicalOrExpression:left - \"||\" - LogicalAndExpression:right {logical_expression('||', left, right)} | LogicalAndExpression)")
+  Rules[:_LogicalOrExpressionNoIn] = rule_info("LogicalOrExpressionNoIn", "(LogicalAndExpressionNoIn:left - \"||\" - LogicalAndExpressionNoIn:right {logical_expression('||', left, right)} | LogicalAndExpressionNoIn)")
+  Rules[:_LogicalAndExpression] = rule_info("LogicalAndExpression", "(LogicalAndExpression:left - \"&&\" - BitwiseOrExpression:right {logical_expression('&&', left, right)} | BitwiseOrExpression)")
+  Rules[:_LogicalAndExpressionNoIn] = rule_info("LogicalAndExpressionNoIn", "(LogicalAndExpression:left - \"&&\" - BitwiseOrExpressionNoIn:right {logical_expression('&&', left, right)} | BitwiseOrExpressionNoIn)")
+  Rules[:_BitwiseOrExpression] = rule_info("BitwiseOrExpression", "(BitwiseOrExpression:left - \"|\" !\"=\" - BitwiseXOrExpression:right {binary_expression('|', left, right)} | BitwiseXOrExpression)")
+  Rules[:_BitwiseOrExpressionNoIn] = rule_info("BitwiseOrExpressionNoIn", "(BitwiseOrExpressionNoIn:left - \"|\" !\"=\" - BitwiseXOrExpressionNoIn:right {binary_expression('|', left, right)} | BitwiseXOrExpressionNoIn)")
+  Rules[:_BitwiseXOrExpression] = rule_info("BitwiseXOrExpression", "(BitwiseXOrExpression:left - \"^\" !\"=\" - BitwiseAndExpression:right {binary_expression('^', left, right)} | BitwiseAndExpression)")
+  Rules[:_BitwiseXOrExpressionNoIn] = rule_info("BitwiseXOrExpressionNoIn", "(BitwiseXOrExpressionNoIn:left - \"^\" !\"=\" - BitwiseAndExpressionNoIn:right {binary_expression('^', left, right)} | BitwiseAndExpressionNoIn)")
+  Rules[:_BitwiseAndExpression] = rule_info("BitwiseAndExpression", "(BitwiseAndExpression:left - \"&\" !\"=\" - EqualityExpression:right {binary_expression('&', left, right)} | EqualityExpression)")
+  Rules[:_BitwiseAndExpressionNoIn] = rule_info("BitwiseAndExpressionNoIn", "(BitwiseAndExpressionNoIn:left - \"&\" !\"=\" - EqualityExpressionNoIn:right {binary_expression('&', left, right)} | EqualityExpressionNoIn)")
+  Rules[:_EqualityExpression] = rule_info("EqualityExpression", "(EqualityExpression:left - EqualityOp:op - RelationalExpression:right {binary_expression(op, left, right)} | RelationalExpression)")
+  Rules[:_EqualityExpressionNoIn] = rule_info("EqualityExpressionNoIn", "(EqualityExpressionNoIn:left - EqualityOp:op - RelationalExpressionNoIn:right {binary_expression(op, left, right)} | RelationalExpressionNoIn)")
   Rules[:_EqualityOp] = rule_info("EqualityOp", "< (\"===\" | \"!==\" | \"==\" | \"!=\") > { text }")
-  Rules[:_RelationalExpression] = rule_info("RelationalExpression", "(RelationalExpression:left - RelationalOp:op - ShiftExpression:right {self.binary_expression(op, left, right)} | ShiftExpression:expr)")
-  Rules[:_RelationalExpressionNoIn] = rule_info("RelationalExpressionNoIn", "(RelationalExpressionNoIn:left - RelationalOpNoIn - ShiftExpression:right {self.binary_expression(op, left, right)} | ShiftExpression)")
+  Rules[:_RelationalExpression] = rule_info("RelationalExpression", "(RelationalExpression:left - RelationalOp:op - ShiftExpression:right {binary_expression(op, left, right)} | ShiftExpression:expr)")
+  Rules[:_RelationalExpressionNoIn] = rule_info("RelationalExpressionNoIn", "(RelationalExpressionNoIn:left - RelationalOpNoIn - ShiftExpression:right {binary_expression(op, left, right)} | ShiftExpression)")
   Rules[:_RelationalOp] = rule_info("RelationalOp", "< (\"<=\" | \">=\" | \"<\" | \">\" | InstanceOfTok | InTok) > { text }")
   Rules[:_RelationalOpNoIn] = rule_info("RelationalOpNoIn", "< (\"<=\" | \">=\" | \"<\" | \">\" | InstanceOfTok) > { text }")
-  Rules[:_ShiftExpression] = rule_info("ShiftExpression", "(ShiftExpression:left - ShiftOp:op - AdditiveExpression:right {self.binary_expression(op, left, right)} | AdditiveExpression)")
+  Rules[:_ShiftExpression] = rule_info("ShiftExpression", "(ShiftExpression:left - ShiftOp:op - AdditiveExpression:right {binary_expression(op, left, right)} | AdditiveExpression)")
   Rules[:_ShiftOp] = rule_info("ShiftOp", "< (\"<<\" | \">>>\" | \">>\") > { text }")
-  Rules[:_AdditiveExpression] = rule_info("AdditiveExpression", "(AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right {self.binary_expression(op, left, right)} | MultiplicativeExpression)")
+  Rules[:_AdditiveExpression] = rule_info("AdditiveExpression", "(AdditiveExpression:left - AdditiveOp:op - MultiplicativeExpression:right {binary_expression(op, left, right)} | MultiplicativeExpression)")
   Rules[:_AdditiveOp] = rule_info("AdditiveOp", "(< \"+\" > !(\"+\" | \"=\") { text } | < \"-\" > !(\"-\" | \"=\") { text })")
-  Rules[:_MultiplicativeExpression] = rule_info("MultiplicativeExpression", "(MultiplicativeExpression:left - MultiplicativeOp:op - UnaryExpression:right {self.binary_expression(op, left, right)} | UnaryExpression)")
+  Rules[:_MultiplicativeExpression] = rule_info("MultiplicativeExpression", "(MultiplicativeExpression:left - MultiplicativeOp:op - UnaryExpression:right {binary_expression(op, left, right)} | UnaryExpression)")
   Rules[:_MultiplicativeOp] = rule_info("MultiplicativeOp", "< (\"*\" | \"/\" | \"%\") > !\"=\" { text }")
   Rules[:_UnaryExpression] = rule_info("UnaryExpression", "(PostfixExpression | SimpleUnaryExpression)")
-  Rules[:_SimpleUnaryExpression] = rule_info("SimpleUnaryExpression", "UnaryOp:op - UnaryExpression:expr {self.unary_expression(op, expr)}")
+  Rules[:_SimpleUnaryExpression] = rule_info("SimpleUnaryExpression", "UnaryOp:op - UnaryExpression:expr {unary_expression(op, expr)}")
   Rules[:_UnaryOp] = rule_info("UnaryOp", "< (DeleteTok | VoidTok | TypeofTok | \"++\" | \"--\" | \"+\" | \"-\" | \"~\" | \"!\") > { text }")
-  Rules[:_PostfixExpression] = rule_info("PostfixExpression", "(LeftHandSideExpression:argument SnoLB? PostfixOp:op {self.update_expression(op, argument, false)} | LeftHandSideExpression)")
+  Rules[:_PostfixExpression] = rule_info("PostfixExpression", "(LeftHandSideExpression:argument SnoLB? PostfixOp:op {update_expression(op, argument, false)} | LeftHandSideExpression)")
   Rules[:_PostfixOp] = rule_info("PostfixOp", "< (\"++\" | \"--\") > { text }")
   Rules[:_LeftHandSideExpression] = rule_info("LeftHandSideExpression", "(CallExpression | NewExpression)")
-  Rules[:_CallExpression] = rule_info("CallExpression", "(CallExpression:call - BracketAccessor:expr {self.member_expression(call, expr, true)} | CallExpression:call - DotAccessor:expr {self.member_expression(call, expr, false)} | CallExpression:expr - Arguments:arguments {self.call_expression(expr, arguments)} | MemberExpression:expr - Arguments:arguments {self.call_expression(expr, arguments)})")
+  Rules[:_CallExpression] = rule_info("CallExpression", "(CallExpression:call - BracketAccessor:expr {member_expression(call, expr, true)} | CallExpression:call - DotAccessor:expr {member_expression(call, expr, false)} | CallExpression:expr - Arguments:arguments {call_expression(expr, arguments)} | MemberExpression:expr - Arguments:arguments {call_expression(expr, arguments)})")
   Rules[:_BracketAccessor] = rule_info("BracketAccessor", "\"[\" - Expression:expr - \"]\" { expr }")
-  Rules[:_DotAccessor] = rule_info("DotAccessor", "\".\" - IdentifierName:id {self.identifier(id)}")
+  Rules[:_DotAccessor] = rule_info("DotAccessor", "\".\" - IdentifierName:id {identifier(id)}")
   Rules[:_Arguments] = rule_info("Arguments", "\"(\" - ArgumentList?:args - \")\" { args || [] }")
   Rules[:_ArgumentList] = rule_info("ArgumentList", "AssignmentExpression:expr (- \",\" - AssignmentExpression)*:exprs { [expr] + exprs }")
-  Rules[:_NewExpression] = rule_info("NewExpression", "(MemberExpression | NewTok - NewExpression:expr {self.new_expression(expr, nil)})")
-  Rules[:_MemberExpression] = rule_info("MemberExpression", "(MemberExpression:left - BracketAccessor:right {self.member_expression(left, right, true)} | MemberExpression:left - DotAccessor:right {self.member_expression(left, right, false)} | NewTok - MemberExpression:expr - Arguments:arguments {self.new_expression(expr, arguments)} | PrimaryExpression | FunctionExpression)")
-  Rules[:_PrimaryExpression] = rule_info("PrimaryExpression", "(ThisTok {self.this_expression()} | Identifier | Literal | ArrayLiteral | ObjectLiteral | \"(\" - Expression:expr - \")\" { expr.parens = true; expr })")
-  Rules[:_ArrayLiteral] = rule_info("ArrayLiteral", "(\"[\" - Elision?:elision - \"]\" {self.array_expression(elision || [])} | \"[\" - ElementList:list - \"]\" {self.array_expression(list)} | \"[\" - ElementList:list - \",\" - Elision?:elision - \"]\" {self.array_expression(list + (elision || []))})")
+  Rules[:_NewExpression] = rule_info("NewExpression", "(MemberExpression | NewTok - NewExpression:expr {new_expression(expr, nil)})")
+  Rules[:_MemberExpression] = rule_info("MemberExpression", "(MemberExpression:left - BracketAccessor:right {member_expression(left, right, true)} | MemberExpression:left - DotAccessor:right {member_expression(left, right, false)} | NewTok - MemberExpression:expr - Arguments:arguments {new_expression(expr, arguments)} | PrimaryExpression | FunctionExpression)")
+  Rules[:_PrimaryExpression] = rule_info("PrimaryExpression", "(ThisTok {this_expression()} | Identifier | Literal | ArrayLiteral | ObjectLiteral | \"(\" - Expression:expr - \")\" { expr.parens = true; expr })")
+  Rules[:_ArrayLiteral] = rule_info("ArrayLiteral", "(\"[\" - Elision?:elision - \"]\" {array_expression(elision || [])} | \"[\" - ElementList:list - \"]\" {array_expression(list)} | \"[\" - ElementList:list - \",\" - Elision?:elision - \"]\" {array_expression(list + (elision || []))})")
   Rules[:_ElementList] = rule_info("ElementList", "(ElementList:list - \",\" - Elision?:elision - AssignmentExpression:expr { list + (elision || []) + [expr] } | Elision?:elision - AssignmentExpression:expr { (elision || []) + [expr] })")
   Rules[:_Elision] = rule_info("Elision", "(Elision:elision - \",\" { elision + [nil] } | \",\" { [nil] })")
-  Rules[:_ObjectLiteral] = rule_info("ObjectLiteral", "\"{\" SnoComment* PropertyNameAndValueList?:list - \",\"? - \"}\" {self.object_expression(list || [])}")
+  Rules[:_ObjectLiteral] = rule_info("ObjectLiteral", "\"{\" SnoComment* PropertyNameAndValueList?:list - \",\"? - \"}\" {object_expression(list || [])}")
   Rules[:_PropertyNameAndValueList] = rule_info("PropertyNameAndValueList", "PropertyAssignment:prop (- \",\" SnoComment* PropertyAssignment)*:props { [prop] + props }")
-  Rules[:_PropertyAssignment] = rule_info("PropertyAssignment", "(-:comments PropertyName:key - \":\" - AssignmentExpression:value {self.property(key, value, 'init', comments)} | PropertyGetter | PropertySetter)")
+  Rules[:_PropertyAssignment] = rule_info("PropertyAssignment", "(-:comments PropertyName:key - \":\" - AssignmentExpression:value {property(key, value, 'init', comments)} | PropertyGetter | PropertySetter)")
   Rules[:_PropertyGetter] = rule_info("PropertyGetter", "\"get\" - PropertyName - \"(\" - \")\" - \"{\" - FunctionBody - \"}\"")
   Rules[:_PropertySetter] = rule_info("PropertySetter", "\"set\" - PropertyName - \"(\" - PropertySetParameterList - \")\" - \"{\" - FunctionBody - \"}\"")
-  Rules[:_PropertyName] = rule_info("PropertyName", "(IdentifierName:name {self.identifier(name)} | StringLiteral | NumericLiteral)")
+  Rules[:_PropertyName] = rule_info("PropertyName", "(IdentifierName:name {identifier(name)} | StringLiteral | NumericLiteral)")
   Rules[:_PropertySetParameterList] = rule_info("PropertySetParameterList", "Identifier")
-  Rules[:_Literal] = rule_info("Literal", "(NullLiteral {self.literal(nil)} | BooleanLiteral | NumericLiteral:number {self.literal(number)} | StringLiteral:string {self.literal(string)} | RegularExpressionLiteral:regex {self.literal(regex)})")
+  Rules[:_Literal] = rule_info("Literal", "(NullLiteral {literal(nil)} | BooleanLiteral | NumericLiteral:number {literal(number)} | StringLiteral:string {literal(string)} | RegularExpressionLiteral:regex {literal(regex)})")
   Rules[:_NullLiteral] = rule_info("NullLiteral", "NullTok")
-  Rules[:_BooleanLiteral] = rule_info("BooleanLiteral", "(TrueTok {self.literal(true)} | FalseTok {self.literal(false)})")
+  Rules[:_BooleanLiteral] = rule_info("BooleanLiteral", "(TrueTok {literal(true)} | FalseTok {literal(false)})")
   Rules[:_NumericLiteral] = rule_info("NumericLiteral", "< (DecimalLiteral:literal | HexIntegerLiteral:literal) > !IdentifierStart { literal }")
-  Rules[:_DecimalLiteral] = rule_info("DecimalLiteral", "(< DecimalIntegerLiteral \".\" DecimalDigit* ExponentPart? > {self.number(text)} | < \".\" DecimalDigit+ ExponentPart? > {self.number(text)} | < DecimalIntegerLiteral ExponentPart? > {self.number(text)})")
-  Rules[:_DecimalIntegerLiteral] = rule_info("DecimalIntegerLiteral", "< (\"0\" | /[1-9]/ DecimalDigit*) > {self.number(text)}")
-  Rules[:_HexIntegerLiteral] = rule_info("HexIntegerLiteral", "(< \"0x\" HexDigit+ > {self.number(text)} | < \"0X\" HexDigit+ > {self.number(text)})")
+  Rules[:_DecimalLiteral] = rule_info("DecimalLiteral", "(< DecimalIntegerLiteral \".\" DecimalDigit* ExponentPart? > {number(text)} | < \".\" DecimalDigit+ ExponentPart? > {number(text)} | < DecimalIntegerLiteral ExponentPart? > {number(text)})")
+  Rules[:_DecimalIntegerLiteral] = rule_info("DecimalIntegerLiteral", "< (\"0\" | /[1-9]/ DecimalDigit*) > {number(text)}")
+  Rules[:_HexIntegerLiteral] = rule_info("HexIntegerLiteral", "(< \"0x\" HexDigit+ > {number(text)} | < \"0X\" HexDigit+ > {number(text)})")
   Rules[:_DecimalDigit] = rule_info("DecimalDigit", "/[0-9]/")
   Rules[:_ExponentPart] = rule_info("ExponentPart", "/[eE]/ SignedInteger")
   Rules[:_SignedInteger] = rule_info("SignedInteger", "(DecimalDigit+ | \"+\" DecimalDigit+ | \"-\" DecimalDigit+)")
   Rules[:_DQ] = rule_info("DQ", "\"\\\"\"")
   Rules[:_SQ] = rule_info("SQ", "\"'\"")
-  Rules[:_StringLiteral] = rule_info("StringLiteral", "(DQ < DoubleStringCharacter* > DQ {self.string_literal(text, '\"')} | SQ < SingleStringCharacter* > SQ {self.string_literal(text, \"'\")})")
+  Rules[:_StringLiteral] = rule_info("StringLiteral", "(DQ < DoubleStringCharacter* > DQ {string_literal(text, '\"')} | SQ < SingleStringCharacter* > SQ {string_literal(text, \"'\")})")
   Rules[:_RS] = rule_info("RS", "\"\\\\\"")
   Rules[:_DoubleStringCharacter] = rule_info("DoubleStringCharacter", "(!(DQ | RS | LineTerminator) < SourceCharacter > { text } | < RS EscapeSequence > { text } | LineContinuation)")
   Rules[:_SingleStringCharacter] = rule_info("SingleStringCharacter", "(!(SQ | RS | LineTerminator) < SourceCharacter > { text } | < RS EscapeSequence > { text } | LineContinuation)")
@@ -9440,7 +9440,7 @@ class LatteScript::Parser < KPeg::CompiledParser
   Rules[:_EscapeCharacter] = rule_info("EscapeCharacter", "(SingleEscapeCharacter | DecimalDigit | \"x\" | \"u\")")
   Rules[:_HexEscapeSequence] = rule_info("HexEscapeSequence", "\"x\" HexDigit HexDigit")
   Rules[:_UnicodeEscapeSequence] = rule_info("UnicodeEscapeSequence", "\"u\" HexDigit HexDigit HexDigit HexDigit")
-  Rules[:_RegularExpressionLiteral] = rule_info("RegularExpressionLiteral", "\"/\" RegularExpressionBody:body \"/\" RegularExpressionFlags:flags {self.regexp(body, flags)}")
+  Rules[:_RegularExpressionLiteral] = rule_info("RegularExpressionLiteral", "\"/\" RegularExpressionBody:body \"/\" RegularExpressionFlags:flags {regexp(body, flags)}")
   Rules[:_RegularExpressionBody] = rule_info("RegularExpressionBody", "< RegularExpressionFirstChar RegularExpressionChar* > { text }")
   Rules[:_RegularExpressionFirstChar] = rule_info("RegularExpressionFirstChar", "(!(LineTerminator | \"*\" | \"\\\\\" | \"/\" | \"[\") SourceCharacter | RegularExpressionBackslashSequence | RegularExpressionClass)")
   Rules[:_RegularExpressionChar] = rule_info("RegularExpressionChar", "(!(LineTerminator | \"\\\\\" | \"/\" | \"[\") SourceCharacter | RegularExpressionBackslashSequence | RegularExpressionClass)")

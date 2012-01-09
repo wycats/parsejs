@@ -55,7 +55,7 @@
     super
     @benchmark = true
   end
-%}
+}
 
 # Whitespace and Source Characters
 
