@@ -119,7 +119,7 @@ module ParseJS
 
       def visit_NewExpression(expr)
         possible_variable_access expr.callee
-        possible_variable_access_array expr.args
+        possible_variable_access_array expr.args if expr.args
 
         super
       end
