@@ -1,6 +1,12 @@
+require "parsejs/scope"
+
 module ParseJS
   module AST
     class Node
+      def type?(string)
+        self.class.name.split("::").last == string
+      end
+
       def cuddly?
         false
       end
@@ -42,6 +48,18 @@ module ParseJS
       def statement?
         true
       end
+    end
+
+    class FunctionExpression
+      include ParseJS::AST::Scope
+    end
+
+    class FunctionDeclaration
+      include ParseJS::AST::Scope
+    end
+
+    class Program
+      include ParseJS::AST::Scope
     end
 
     statements  = [VariableDeclaration, EmptyStatement, ExpressionStatement, IfStatement]

@@ -1,11 +1,11 @@
 module ParseJS
   class Visitor
     def accept(node)
-      visit(node)
+      visit(node) if node
     end
 
     def map(node)
-      node.map { |item| item ? accept(item) : nil }
+      node && node.map { |item| item ? accept(item) : nil }
     end
 
     def visit(node)
@@ -170,27 +170,31 @@ module ParseJS
     end
 
     def visit_SwitchCase(switch)
-      [accept(switch.test), map(switch.consequent)]
+      [switch.test && accept(switch.test), map(switch.consequent)]
     end
 
     def visit_TryStatement(statement)
       [
-        accept(statement.block),
-        accept(statement.handler),
-        accept(statement.finalizer)
+        statement.block && accept(statement.block),
+        statement.handler && accept(statement.handler),
+        statement.finalizer && accept(statement.finalizer)
       ]
     end
 
     def visit_CatchClause(clause)
-      [accept(clause.param), accept(handler.body)]
+      [accept(clause.param), accept(clause.body)]
     end
 
     def visit_FunctionDeclaration(decl)
       [
         decl.id && accept(decl.id),
-        map(decl.params),
+        accept(decl.params),
         map(decl.body)
       ]
+    end
+
+    def visit_ParameterList(params)
+      map(params.list)
     end
 
     def visit_FunctionExpression(expr)
@@ -211,6 +215,43 @@ module ParseJS
 
     def visit_Comment(comment)
       [comment.type, comment.body, comment.newline]
+    end
+
+    def visit_WithStatement(statement)
+      [accept(statement.object), accept(statement.body)]
+    end
+
+    module ScopeManager
+      def initialize(*)
+        @scopes = []
+        super
+      end
+
+      def current_scope
+        @scopes.last
+      end
+
+      def push_child(scope)
+        current_scope.child_scopes ||= []
+        current_scope.child_scopes << scope
+        scope.parent_scope = current_scope
+      end
+
+      def visit_Program(program)
+        @scopes << program
+        ret = super
+        @scopes.pop
+        ret
+      end
+
+      def visit_FunctionDeclaration(decl)
+        push_child(decl)
+
+        @scopes << decl
+        ret = super
+        @scopes.pop
+        ret
+      end
     end
   end
 end
