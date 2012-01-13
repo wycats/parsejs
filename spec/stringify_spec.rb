@@ -16,9 +16,10 @@ describe "stringifying" do
   end
 
   def should_match_compressed(string)
-    should = Uglifier.new.compile(string.force_encoding("UTF-8"))
+    string.force_encoding("UTF-8") if string.respond_to?(:force_encoding)
+    should = Uglifier.new.compile(string)
 
-    string.force_encoding("BINARY")
+    string.force_encoding("BINARY") if string.respond_to?(:force_encoding)
 
     ast = ParseJS.parse(string)
     new_string = ParseJS::Stringifier.to_string(ast) do |stringifier|
@@ -26,7 +27,8 @@ describe "stringifying" do
     end
 
     File.open("ewot", "w") { |file| file.puts new_string }
-    new_string = Uglifier.new.compile(new_string.force_encoding("UTF-8"))
+    new_string.force_encoding("UTF-8") if new_string.respond_to?(:force_encoding)
+    new_string = Uglifier.new.compile(new_string)
 
     new_string.split(";").should == should.split(";")
   end
