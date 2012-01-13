@@ -577,7 +577,7 @@ describe "stringifying" do
     "jquery-1.7.js"
   ].each do |file|
     contents = File.read(File.expand_path("../fixtures/#{file}", __FILE__))
-    contents.force_encoding("BINARY")
+    contents.force_encoding("BINARY") if contents.respond_to?(:force_encoding)
     it "correctly parses and stringifies #{file} for compression - #{Digest::MD5.hexdigest(contents)}" do
       should_match_compressed contents
     end
