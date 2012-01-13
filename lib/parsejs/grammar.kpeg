@@ -17,6 +17,7 @@
 %% object_expression = ast ObjectExpression(properties)
 %% function_declaration = ast FunctionDeclaration(id, params, body)
 %% function_expression = ast FunctionExpression(id, params, body)
+%% parameter_list = ast ParameterList(list)
 %% return_statement = ast ReturnStatement(label)
 %% try_statement = ast TryStatement(block, handler, finalizer)
 %% catch_clause = ast CatchClause(param, body)
@@ -156,11 +157,11 @@ Program = (CommentedStatement)*:s - ~program(s)
 
 FunctionBody = (CommentedStatement)*:statements - { statements }
 
-FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_declaration(id, params || [], body)
+FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_declaration(id, params || parameter_list([]), body)
 
-FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_expression(id, params || [], body)
+FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" ~function_expression(id, params || parameter_list([]), body)
 
-FormalParameterList = Identifier:id (- "," - Identifier)*:ids { [id] + ids }
+FormalParameterList = Identifier:id (- "," - Identifier)*:ids ~parameter_list([id] + ids)
 
 UseStrictDirective = "use" S "strict" S ("," !(LineTerminator) SourceCharacter)*
 
@@ -571,6 +572,4 @@ RegularExpressionClassChar      = !(LineTerminator | "\\" | "]" ) SourceCharacte
                                 | RegularExpressionBackslashSequence
 
 RegularExpressionFlags          = < IdentifierPart* > { text }
-
-
 

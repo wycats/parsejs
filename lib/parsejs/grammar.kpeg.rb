@@ -248,6 +248,12 @@ class ParseJS::Parser < KPeg::CompiledParser
       end
       attr_reader :properties
     end
+    class ParameterList < Node
+      def initialize(list)
+        @list = list
+      end
+      attr_reader :list
+    end
     class Program < Node
       def initialize(elements)
         @elements = elements
@@ -478,6 +484,9 @@ class ParseJS::Parser < KPeg::CompiledParser
   end
   def object_pattern(properties)
     ::ParseJS::AST::ObjectPattern.new(properties)
+  end
+  def parameter_list(list)
+    ::ParseJS::AST::ParameterList.new(list)
   end
   def program(elements)
     ::ParseJS::AST::Program.new(elements)
@@ -2106,7 +2115,7 @@ class ParseJS::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_declaration(id, params || [], body)}
+  # FunctionDeclaration = FunctionTok - Identifier:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_declaration(id, params || parameter_list([]), body)}
   def _FunctionDeclaration
 
     _save = self.pos
@@ -2199,7 +2208,7 @@ class ParseJS::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; function_declaration(id, params || [], body); end
+      @result = begin; function_declaration(id, params || parameter_list([]), body); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2211,7 +2220,7 @@ class ParseJS::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_expression(id, params || [], body)}
+  # FunctionExpression = FunctionTok - Identifier?:id - "(" - FormalParameterList?:params - ")" - "{" SnoComment* FunctionBody:body - "}" {function_expression(id, params || parameter_list([]), body)}
   def _FunctionExpression
 
     _save = self.pos
@@ -2310,7 +2319,7 @@ class ParseJS::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin; function_expression(id, params || [], body); end
+      @result = begin; function_expression(id, params || parameter_list([]), body); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -2322,7 +2331,7 @@ class ParseJS::Parser < KPeg::CompiledParser
     return _tmp
   end
 
-  # FormalParameterList = Identifier:id (- "," - Identifier)*:ids { [id] + ids }
+  # FormalParameterList = Identifier:id (- "," - Identifier)*:ids {parameter_list([id] + ids)}
   def _FormalParameterList
 
     _save = self.pos
@@ -2370,7 +2379,7 @@ class ParseJS::Parser < KPeg::CompiledParser
         self.pos = _save
         break
       end
-      @result = begin;  [id] + ids ; end
+      @result = begin; parameter_list([id] + ids); end
       _tmp = true
       unless _tmp
         self.pos = _save
@@ -9323,9 +9332,9 @@ class ParseJS::Parser < KPeg::CompiledParser
   Rules[:_root] = rule_info("root", "Program:p { p }")
   Rules[:_Program] = rule_info("Program", "CommentedStatement*:s - {program(s)}")
   Rules[:_FunctionBody] = rule_info("FunctionBody", "CommentedStatement*:statements - { statements }")
-  Rules[:_FunctionDeclaration] = rule_info("FunctionDeclaration", "FunctionTok - Identifier:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_declaration(id, params || [], body)}")
-  Rules[:_FunctionExpression] = rule_info("FunctionExpression", "FunctionTok - Identifier?:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_expression(id, params || [], body)}")
-  Rules[:_FormalParameterList] = rule_info("FormalParameterList", "Identifier:id (- \",\" - Identifier)*:ids { [id] + ids }")
+  Rules[:_FunctionDeclaration] = rule_info("FunctionDeclaration", "FunctionTok - Identifier:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_declaration(id, params || parameter_list([]), body)}")
+  Rules[:_FunctionExpression] = rule_info("FunctionExpression", "FunctionTok - Identifier?:id - \"(\" - FormalParameterList?:params - \")\" - \"{\" SnoComment* FunctionBody:body - \"}\" {function_expression(id, params || parameter_list([]), body)}")
+  Rules[:_FormalParameterList] = rule_info("FormalParameterList", "Identifier:id (- \",\" - Identifier)*:ids {parameter_list([id] + ids)}")
   Rules[:_UseStrictDirective] = rule_info("UseStrictDirective", "\"use\" S \"strict\" S (\",\" !LineTerminator SourceCharacter)*")
   Rules[:_Statement] = rule_info("Statement", "(IfStatement | ExpressionStatement | VariableStatement | Block | EmptyStatement | IterationStatement | ContinueStatement | BreakStatement | ReturnStatement | WithStatement | LabeledStatement | SwitchStatement | ThrowStatement | TryStatement | DebuggerStatement | FunctionDeclaration)")
   Rules[:_CommentedStatement] = rule_info("CommentedStatement", "-:comments Statement:s {commented_statement(s, comments)}")

@@ -392,7 +392,7 @@ module ParseJS
 
     def visit_FunctionDeclaration(decl)
       id = decl.id
-      parameters = decl.params
+      parameters = decl.params.list
       body = decl.body
 
       out = "function " + accept(id) + "("
