@@ -8,4 +8,8 @@ end
 
 task :compile => "lib/parsejs/grammar.kpeg.rb"
 
+task :spec => :compile do
+  sh "rspec -cfs spec"
+end
+
 task :default => :compile
