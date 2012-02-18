@@ -77,11 +77,11 @@ module ParseJS
     end
 
     def visit_FunctionDeclaration(decl)
-      with_variables(decl) { super }
+      with_variables(decl, decl.params.list.map(&:val)) { super }
     end
 
     def visit_FunctionExpression(expr)
-      with_variables(expr) { super }
+      with_variables(expr, expr.params.list.map(&:val)) { super }
     end
 
     def with_variables(expr, params=expr.params.map(&:val))
@@ -160,15 +160,8 @@ module ParseJS
       elsif ns = YARD::Registry.at(namespace)
         ns
       else
-        parts = namespace.split("::")
-        parent = parts[0...-1].join("::")
-
-        if parent.empty?
-          YARD::CodeObjects::NamespaceObject.new(YARD::Registry.root, parts[-1])
-        else
-          build_namespace parent
-          YARD::CodeObjects::NamespaceObject.new(parent, parts[-1])
-        end
+        name = namespace.gsub('::', '.')
+        YARD::CodeObjects::NamespaceObject.new(:root, name)
       end
     end
 
