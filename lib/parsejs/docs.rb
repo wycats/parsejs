@@ -77,11 +77,11 @@ module ParseJS
     end
 
     def visit_FunctionDeclaration(decl)
-      with_variables(decl) { super }
+      with_variables(decl, decl.params.list.map(&:val)) { super }
     end
 
     def visit_FunctionExpression(expr)
-      with_variables(expr) { super }
+      with_variables(expr, expr.params.list.map(&:val)) { super }
     end
 
     def with_variables(expr, params=expr.params.map(&:val))
