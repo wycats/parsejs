@@ -70,6 +70,11 @@ module ParseJS
     def initialize(*)
       @current_variables = []
       @current_class = []
+      @filename = []
+    end
+
+    def visit(ast, filename=nil)
+      with_filename(filename){ super(ast) }
     end
 
     def visit_Program(program)
@@ -82,6 +87,13 @@ module ParseJS
 
     def visit_FunctionExpression(expr)
       with_variables(expr, expr.params.list.map(&:val)) { super }
+    end
+
+    def with_filename(filename)
+      @filename.push(filename)
+      yield
+    ensure
+      @filename.pop
     end
 
     def with_variables(expr, params=expr.params.map(&:val))
@@ -138,6 +150,7 @@ module ParseJS
                 class_name = left_string.split(".")[-1]
 
                 obj = YARD::CodeObjects::ClassObject.new(namespace_obj, class_name)
+                obj.add_file(current_filename) if current_filename
                 obj.docstring = stripped_comment
 
                 @current_class.push [klass, extends, obj]
@@ -161,7 +174,9 @@ module ParseJS
         ns
       else
         name = namespace.gsub('::', '.')
-        YARD::CodeObjects::ModuleObject.new(:root, name)
+        obj = YARD::CodeObjects::ModuleObject.new(:root, name)
+        obj.add_file(current_filename) if current_filename
+        obj
       end
     end
 
@@ -174,6 +189,10 @@ module ParseJS
       @current_class.last[2]
     end
 
+    def current_filename
+      @filename.compact.last
+    end
+
     def visit_Property(property)
       return if @current_class.empty?
 
@@ -183,6 +202,7 @@ module ParseJS
       case property.value
       when FunctionDeclaration, FunctionExpression
         obj = YARD::CodeObjects::MethodObject.new(current_yard_class, property.key.val)
+        obj.add_file(current_filename) if current_filename
         obj.docstring = stripped_comment
       else
         # found a non-method property
