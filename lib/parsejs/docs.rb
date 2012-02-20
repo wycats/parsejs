@@ -161,7 +161,7 @@ module ParseJS
         ns
       else
         name = namespace.gsub('::', '.')
-        YARD::CodeObjects::NamespaceObject.new(:root, name)
+        YARD::CodeObjects::ModuleObject.new(:root, name)
       end
     end
 
