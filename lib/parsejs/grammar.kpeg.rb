@@ -938,7 +938,7 @@ class ParseJS::Parser < KPeg::CompiledParser
 
   # SourceCharacter = /[\x00-\xff]/n
   def _SourceCharacter
-    _tmp = scan(/\A(?-mix:[\x00-\xff])/)
+    _tmp = scan(/\A(?-mix:[\x00-\xff])/n)
     set_failed_rule :_SourceCharacter unless _tmp
     return _tmp
   end
